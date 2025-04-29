@@ -15,16 +15,16 @@ ifeq ($(UNAME_S),Darwin)	# macOS
 endif
 
 # TODO
-SERVER_DIR =
-SERVER_SRC = $(SERVER_DIR)/
+SERVER_DIR = server
+SERVER_SRC = $(SERVER_DIR)/src
 
 # TODO
-CLIENT_DIR =
-CLIENT_SRC = $(CLIENT_DIR)/
+CLIENT_DIR = client
+CLIENT_SRC = $(CLIENT_DIR)/src
 
 # TODO
-GFX_DIR =
-GFX_SRC = $(GFX_DIR)/
+GFX_DIR = gfx
+GFX_SRC = $(GFX_DIR)/src
 
 OBJ_DIR = obj
 $(OBJ_DIR):
