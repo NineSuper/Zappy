@@ -3,28 +3,36 @@ UNAME_S := $(shell uname -s)
 
 NAME = Zappy
 
-CC =
-FLAGS =
-
 ifeq ($(UNAME_S),Linux)		# Linux
-    LFLAGS =
+    # LFLAGS =
 endif
 
 ifeq ($(UNAME_S),Darwin)	# macOS
-    LFLAGS =
+    # LFLAGS =
 endif
 
-# TODO
-SERVER_DIR = server
-SERVER_SRC = $(SERVER_DIR)/src
+BIN_DIR		= bin
 
 # TODO
-CLIENT_DIR = client
-CLIENT_SRC = $(CLIENT_DIR)/src
+SERVER_BIN 	= $(BIN_DIR)/server
+SERVER_CC 	= rustc
+SERVER_FLAG =
+SERVER_DIR 	= server
+SERVER_SRC 	= $(shell find $(SERVER_DIR)/src -name '*.rs')
 
 # TODO
-GFX_DIR = gfx
-GFX_SRC = $(GFX_DIR)/src
+CLIENT_BIN 	= $(BIN_DIR)/client
+CLIENT_CC  	=
+CLIENT_FLAG =
+CLIENT_DIR 	= client
+CLIENT_SRC 	= $(CLIENT_DIR)/src
+
+# TODO
+GFX_BIN 	= $(BIN_DIR)/gfx
+GFX_CC  	=
+GFX_FLAG 	=
+GFX_DIR 	= gfx
+GFX_SRC 	= $(GFX_DIR)/src
 
 OBJ_DIR = obj
 $(OBJ_DIR):
@@ -52,7 +60,7 @@ HEADER_COMP     =       echo "\n🤖 $(B_BLUE)$(NAME)$(NO_COLOR)$(BOLD) by $(B_R
 
 COMP_START      =       printf "\n🚧 $(B_YELLOW)Make: $(NO_COLOR)$(BOLD)Debut de compilation...\r$(NO_COLOR)"
 
-EXE_READY       =       echo "\n🐿️  $(B_BLUE)$(NAME)$(NO_COLOR) $(BOLD)est prêt à être exécuté !$(NO_COLOR)\n"
+EXE_READY       =       echo "\n\n🐿️  $(B_BLUE)$(NAME)$(NO_COLOR) $(BOLD)est prêt à être exécuté !$(NO_COLOR)\n"
 
 CLEANED         =       echo "\n💧 $(B_CYAN)Clean: $(NO_COLOR)$(BOLD)Suppression des fichiers objets$(NO_COLOR)\n"
 
@@ -62,13 +70,24 @@ SERV_START		=		printf "\n💿 $(B_YELLOW)Server: $(NO_COLOR)$(BOLD)Debut de comp
 
 SERV_READY		=		echo "\n💿 $(B_YELLOW)Server: $(NO_COLOR)$(BOLD)Compilation terminée ✅$(NO_COLOR)\n"
 
-CLIENT_START	=		printf "\n🎮 $(B_RED)Client: $(NO_COLOR)$(BOLD)Debut de compilation...\r$(NO_COLOR)"
+CLIENT_START	=		echo "\n\n🎮 $(B_RED)Client: $(NO_COLOR)$(BOLD)Debut de compilation...\r$(NO_COLOR)"
 
-CLIENT_READY	=		echo "\n🎮 $(B_RED)Client: $(NO_COLOR)$(BOLD)Compilation terminée ✅$(NO_COLOR)\n"
+CLIENT_READY	=		echo "\n\n🎮 $(B_RED)Client: $(NO_COLOR)$(BOLD)Compilation terminée ✅$(NO_COLOR)\n"
 
-GFX_START		=		printf "\n🐉 $(B_PURPLE)GFX: $(NO_COLOR)$(BOLD)Debut de compilation...\r$(NO_COLOR)"
+GFX_START		=		echo "\n\n🐉 $(B_PURPLE)GFX: $(NO_COLOR)$(BOLD)Debut de compilation...\r$(NO_COLOR)"
 
-GFX_READY		=		echo "\n🐉 $(B_PURPLE)GFX: $(NO_COLOR)$(BOLD)Compilation terminée ✅$(NO_COLOR)\n"
+GFX_READY		=		echo "\n\n🐉 $(B_PURPLE)GFX: $(NO_COLOR)$(BOLD)Compilation terminée ✅$(NO_COLOR)\n"
+
+define print_progress
+	@COUNT=0; \
+	for FILE in $(1); do \
+		COUNT=$$(($$COUNT + 1)); \
+		PERCENT=$$((100 * $$COUNT / $(2))); \
+		printf "$(3) %-33.33s [%3d%%]\r" $$FILE $$PERCENT; \
+		sleep 0.05; \
+	done; \
+	printf "\n"
+endef
 
 # ------------------------------ Regles ------------------------------
 MAKEFLAGS += --silent
@@ -76,11 +95,13 @@ MAKEFLAGS += --silent
 .DEFAULT_GOAL := all
 
 # TODO
-# TOTAL_FILES_SERV := $(words $(SRC))
-# TOTAL_FILES_CLIENT := $(words $(SRC))
-# TOTAL_FILES_GFX := $(words $(SRC))
+TOTAL_FILES_SERV := $(words $(SERVER_SRC))
+TOTAL_FILES_CLIENT := $(words $(CLIENT_SRC))
+TOTAL_FILES_GFX := $(words $(GFX_SRC))
 
-# COMPILED_FILES := 0
+COMPILED_FILES_SERV := 0
+COMPILED_FILES_CLIENT := 0
+COMPILED_FILES_GFX := 0
 
 all:
 	@$(MAKE) comp_start
@@ -91,25 +112,30 @@ all:
 
 server:
 	@$(SERV_START)
-	$(SERV_READY)
+	$(call print_progress,$(SERVER_SRC),$(TOTAL_FILES_SERV),💿 $(B_YELLOW)Server: $(NO_COLOR)$(BOLD)Compilation des fichiers :$(B_CYAN))
+	@$(SERVER_CC) $(SERVER_SRC) -o $(SERVER_BIN)
+#	@$(SERV_READY)
+
 
 client:
 	@$(CLIENT_START)
-	@$(CLIENT_READY)
+#	@$(CLIENT_READY)
 
 gfx:
 	@$(GFX_START)
-	@$(GFX_READY)
+#	@$(GFX_READY)
 
 comp_start:
 	@$(HEADER_COMP)
 
 clean:
+	rm -f  $(SERVER_BIN)
+	rm -f $(CLIENT_BIN_BIN)
+	rm -f $(GFX_BIN)
 	$(CLEANED)
 
 fclean: clean
 	$(FCLEANED)
-
 
 re: fclean all
 
