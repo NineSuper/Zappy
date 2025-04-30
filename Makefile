@@ -129,10 +129,10 @@ comp_start:
 
 clean:
 	rm -f $(SERVER_BIN)
-	rm -f $(SERVER_DIR)/Cargo.lock
+	@cd $(SERVER_DIR) && cargo clean
+	rm -f $(SERVER_DIR)/*.lock
 	rm -f $(CLIENT_BIN)
 	rm -f $(GFX_BIN)
-	@cd $(SERVER_DIR) && cargo clean
 	$(CLEANED)
 
 fclean: clean
