@@ -13,12 +13,11 @@ endif
 
 BIN_DIR		= bin
 
-# TODO
 SERVER_BIN 	= $(BIN_DIR)/server
 SERVER_CC 	= cargo build
 SERVER_FLAG = --release
 SERVER_DIR 	= server
-SERVER_SRC 	=
+SERVER_SRC 	= $(SERVER_DIR)/src
 
 # TODO
 CLIENT_BIN 	= $(BIN_DIR)/client
@@ -60,23 +59,23 @@ HEADER_COMP     =       echo "\n🤖 $(B_BLUE)$(NAME)$(NO_COLOR)$(BOLD) by $(B_R
 
 COMP_START      =       printf "\n🚧 $(B_YELLOW)Make: $(NO_COLOR)$(BOLD)Debut de compilation...\r$(NO_COLOR)"
 
-EXE_READY       =       echo "\n\n🐿️  $(B_BLUE)$(NAME)$(NO_COLOR) $(BOLD)est prêt à être exécuté !$(NO_COLOR)\n"
+EXE_READY       =       echo "\n📦 $(B_BLUE)$(NAME)$(NO_COLOR) $(BOLD)est prêt à être exécuté !$(NO_COLOR)\n"
 
 CLEANED         =       echo "\n💧 $(B_CYAN)Clean: $(NO_COLOR)$(BOLD)Suppression des fichiers objets$(NO_COLOR)\n"
 
 FCLEANED        =       echo "\n🧼 $(B_CYAN)Fclean: $(NO_COLOR)$(BOLD)Suppression des fichiers (binaire + objets + libs)$(NO_COLOR)\n"
 
-SERV_START		=		printf "\n🪩  $(B_YELLOW)Server: $(NO_COLOR)$(BOLD)Debut de compilation...\r$(NO_COLOR)"
+SERV_START		=		printf "\n🪩  $(B_YELLOW)Server: $(NO_COLOR)$(BOLD)Debut de compilation...\r$(NO_COLOR)\n"
 
 SERV_READY		=		echo "\n🪩  $(B_YELLOW)Server: $(NO_COLOR)$(BOLD)Compilation terminée ✅$(NO_COLOR)\n"
 
-CLIENT_START	=		echo "\n\n🎮 $(B_RED)Client: $(NO_COLOR)$(BOLD)Debut de compilation...\r$(NO_COLOR)"
+CLIENT_START	=		echo "\n🎮 $(B_RED)Client: $(NO_COLOR)$(BOLD)Debut de compilation...\r$(NO_COLOR)\n"
 
-CLIENT_READY	=		echo "\n\n🎮 $(B_RED)Client: $(NO_COLOR)$(BOLD)Compilation terminée ✅$(NO_COLOR)\n"
+CLIENT_READY	=		echo "\n🎮 $(B_RED)Client: $(NO_COLOR)$(BOLD)Compilation terminée ✅$(NO_COLOR)\n"
 
-GFX_START		=		echo "\n\n🐉 $(B_PURPLE)GFX: $(NO_COLOR)$(BOLD)Debut de compilation...\r$(NO_COLOR)"
+GFX_START		=		echo "\n🐉 $(B_PURPLE)GFX: $(NO_COLOR)$(BOLD)Debut de compilation...\r$(NO_COLOR)\n"
 
-GFX_READY		=		echo "\n\n🐉 $(B_PURPLE)GFX: $(NO_COLOR)$(BOLD)Compilation terminée ✅$(NO_COLOR)\n"
+GFX_READY		=		echo "\n🐉 $(B_PURPLE)GFX: $(NO_COLOR)$(BOLD)Compilation terminée ✅$(NO_COLOR)\n"
 
 define print_progress
 	@COUNT=0; \
