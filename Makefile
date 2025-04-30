@@ -15,10 +15,10 @@ BIN_DIR		= bin
 
 # TODO
 SERVER_BIN 	= $(BIN_DIR)/server
-SERVER_CC 	= rustc
-SERVER_FLAG =
+SERVER_CC 	= cargo build
+SERVER_FLAG = --release
 SERVER_DIR 	= server
-SERVER_SRC 	= $(shell find $(SERVER_DIR)/src -name '*.rs')
+SERVER_SRC 	=
 
 # TODO
 CLIENT_BIN 	= $(BIN_DIR)/client
@@ -66,9 +66,9 @@ CLEANED         =       echo "\n💧 $(B_CYAN)Clean: $(NO_COLOR)$(BOLD)Suppressi
 
 FCLEANED        =       echo "\n🧼 $(B_CYAN)Fclean: $(NO_COLOR)$(BOLD)Suppression des fichiers (binaire + objets + libs)$(NO_COLOR)\n"
 
-SERV_START		=		printf "\n💿 $(B_YELLOW)Server: $(NO_COLOR)$(BOLD)Debut de compilation...\r$(NO_COLOR)"
+SERV_START		=		printf "\n🪩  $(B_YELLOW)Server: $(NO_COLOR)$(BOLD)Debut de compilation...\r$(NO_COLOR)"
 
-SERV_READY		=		echo "\n💿 $(B_YELLOW)Server: $(NO_COLOR)$(BOLD)Compilation terminée ✅$(NO_COLOR)\n"
+SERV_READY		=		echo "\n🪩  $(B_YELLOW)Server: $(NO_COLOR)$(BOLD)Compilation terminée ✅$(NO_COLOR)\n"
 
 CLIENT_START	=		echo "\n\n🎮 $(B_RED)Client: $(NO_COLOR)$(BOLD)Debut de compilation...\r$(NO_COLOR)"
 
@@ -112,9 +112,9 @@ all:
 
 server:
 	@$(SERV_START)
-	$(call print_progress,$(SERVER_SRC),$(TOTAL_FILES_SERV),💿 $(B_YELLOW)Server: $(NO_COLOR)$(BOLD)Compilation des fichiers :$(B_CYAN))
-	@$(SERVER_CC) $(SERVER_SRC) -o $(SERVER_BIN)
-#	@$(SERV_READY)
+	@cd $(SERVER_DIR) && $(SERVER_CC) $(SERVER_FLAG)
+	@cp $(SERVER_DIR)/target/release/$(notdir $(SERVER_DIR)) $(SERVER_BIN)
+	@$(SERV_READY)
 
 
 client:
@@ -129,9 +129,11 @@ comp_start:
 	@$(HEADER_COMP)
 
 clean:
-	rm -f  $(SERVER_BIN)
-	rm -f $(CLIENT_BIN_BIN)
+	rm -f $(SERVER_BIN)
+	rm -f $(SERVER_DIR)/Cargo.lock
+	rm -f $(CLIENT_BIN)
 	rm -f $(GFX_BIN)
+	@cd $(SERVER_DIR) && cargo clean
 	$(CLEANED)
 
 fclean: clean
@@ -140,6 +142,3 @@ fclean: clean
 re: fclean all
 
 .PHONY: all server client gfx comp_start clean fclean re
-
-# TODO
-# @printf "🚧 $(BOLD_YELLOW)Make: $(NO_COLOR)$(BOLD)Compilation des fichiers :$(BOLD_CYAN) %-33.33s $(BOLD_YELLOW)[%3d%%] \r$(NO_COLOR)" $? $(shell expr \( $(COMPILED_FILES) \) \* 100 / $(TOTAL_FILES))
