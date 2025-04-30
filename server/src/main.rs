@@ -6,14 +6,13 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 15:23:47 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/04/30 13:32:09 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/04/30 16:25:55 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-fn main()
+mod init_env;
+
+fn	main()
 {
-	for i in 0..10
-	{
-		println!("Hello Server ! {}", i);
-	}
+	init_env::init_env();
 }
