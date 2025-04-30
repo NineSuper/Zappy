@@ -6,11 +6,14 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 15:23:47 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/04/29 16:45:44 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/04/30 10:43:00 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 fn main()
 {
-    println!("Hello Server !");
+	for i in 0..10
+	{
+		println!("Hello Server ! {}", i);
+	}
 }
