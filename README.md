@@ -35,6 +35,21 @@ Les habitants de Trantor ont deux objectifs majeurs :
 
 ## 🗄️ Serveur
 
+```
+make ou make server
+```
+
+```
+./bin/server -p <port> -x <width> -y <height> -n <team> [<team>] [<team>] ... -c <nb> -t <t>
+
+-p port number
+-x world width
+-y world height
+-n team\_name\_1 team\_name\_2 ...
+-c number of clients authorized at the beginning of the game
+-t time unit divider (the greater t is, the faster the game will go)
+```
+
 > *(À compléter avec les détails techniques)*
 
 ## 🎮 Client
