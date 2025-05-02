@@ -6,11 +6,11 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:41:42 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/02 13:35:39 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/02 14:31:22 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-use std::collections::HashMap;
+use std::collections::HashMap; // Equivalent de <key, value>
 use crate::object::Objet;
 
 #[derive(Debug, Clone, PartialEq)]

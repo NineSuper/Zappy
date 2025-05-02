@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:31:03 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/02 13:29:51 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/02 14:20:05 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ pub struct Team
 	_name: String,
 	_level: u16,
 	_next_player_id: u32,
+	_connect_nbr: u32,
 	pub _players: Vec<Player>,
 }
 
@@ -32,6 +33,7 @@ impl	Team {
 			_level: 1,
 			_players: Vec::new(),
 			_next_player_id: 1,
+			_connect_nbr: 1, // TODO à modifier je met par défaut à 1 le temps de trouver une solution
 		};
 
 		team.add_player();
@@ -68,14 +70,24 @@ impl	Team {
 		}
 	}
 
-	pub fn get_players(&self) -> &Vec<Player>
+	pub fn	get_players(&self) -> &Vec<Player>
 	{
 		return &self._players;
 	}
 
-	pub fn get_players_mut(&mut self) -> &mut Vec<Player>
+	pub fn	get_players_mut(&mut self) -> &mut Vec<Player>
 	{
 		return &mut self._players;
+	}
+
+	pub fn	add_connect_nbr(&mut self)
+	{
+		self._connect_nbr += 1;
+	}
+
+	pub fn	get_connect_nbr(&self) -> u32
+	{
+		return self._connect_nbr;
 	}
 }
 
