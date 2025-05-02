@@ -115,7 +115,6 @@ server:
 	@cp $(SERVER_DIR)/target/release/$(notdir $(SERVER_DIR)) $(SERVER_BIN)
 	@$(SERV_READY)
 
-
 client:
 	@$(CLIENT_START)
 #	@$(CLIENT_READY)

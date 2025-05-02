@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_env.rs                                        :+:      :+:    :+:   */
+/*   init.rs                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 15:06:42 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/01 22:54:30 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/02 10:21:29 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ fn	print_env(port: u32, height: u32, width: u32, clients: u32, time_unit: u32, t
     println!(
         "{} {}",
         "🌐 IP Address :".green().bold(),
-        format!("127.0.0.1:{}", port).bold()
+        format!("127.0.0.1:{}", port).bold().underline()
     );
     println!(
         "{} {}",
@@ -43,7 +43,7 @@ fn	print_env(port: u32, height: u32, width: u32, clients: u32, time_unit: u32, t
     println!(
         "{} {}",
         "⏱️  Time Unit  :".green().bold(),
-        format!("{} t", time_unit).bold()
+        format!("{}t", time_unit).bold()
     );
 	println!(
 		"{} {}",
@@ -112,6 +112,6 @@ pub	fn	init_env() -> ServerConfig
 	let teams = get_teams(&args);
 
 	print_env(port, height, width, clients, time_unit, &teams);
-	return ServerConfig{_port: port, width, height, _clients: clients, _time_unit: time_unit, _teams: teams};
+	return ServerConfig{_port: port, width, height, _clients: clients, _time_unit: time_unit, teams};
 }
 

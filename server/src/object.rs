@@ -1,22 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server_state.rs                                    :+:      :+:    :+:   */
+/*   object.rs                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/02 10:00:11 by tde-los-         ###   ########.fr       */
+/*   Created: 2025/05/02 08:46:32 by tde-los-          #+#    #+#             */
+/*   Updated: 2025/05/02 13:44:47 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#[derive(Debug)]
-pub struct ServerConfig
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum	Objet
 {
-    pub _port: u32,
-    pub width: u32,
-    pub height: u32,
-    pub _clients: u32,
-    pub _time_unit: u32,
-    pub teams: Vec<String>,
+	_Food,
+	_Linemate,
+	_Deraumere,
+	_Sibur,
+	_Mendiane,
+	_Phiras,
+	_Thystame,
 }

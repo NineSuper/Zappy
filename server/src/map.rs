@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 21:54:08 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/01 22:58:53 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/02 10:15:37 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ pub fn	create_map(width: u32, height: u32) -> Map
 {
 	println!("{}", "Création du monde...".bold());
     let mut rng: ThreadRng = rng();
-    let mut map = vec![vec![Cell { content: None }; width as usize]; height as usize];
+    let mut map: Vec<Vec<Cell>> = vec![vec![Cell { content: None }; width as usize]; height as usize];
 
     for row in map.iter_mut()
 	{
@@ -62,7 +62,7 @@ pub fn	create_map(width: u32, height: u32) -> Map
             }
         }
     }
-	println!("{}", "Monde généré !".bold());
+	println!("{}", "Monde généré !\n".bold());
     return map;
 }
 
