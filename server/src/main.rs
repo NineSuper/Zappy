@@ -6,21 +6,19 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 15:23:47 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/02 14:55:40 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/03 12:52:12 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 mod server_state;
 mod init;
 mod map;
-mod team;
-mod player;
-mod inventory;
-mod object;
+mod entities;
 
 use	server_state::ServerConfig;
-use	team::Team;
-use crate::object::Objet;
+use entities::team::{Team, create_team};
+use entities::object::Objet;
+use entities::player::Player;
 
 fn	main()
 {
@@ -29,10 +27,11 @@ fn	main()
 	let mut	_teams: Vec<Team>;
 
 	_map = map::create_map(config.width, config.height);
-	_teams = team::create_team(config.teams);
+	_teams = create_team(config.teams);
 
 	// Exemple
-	let player: &mut player::Player = &mut _teams[0].get_players_mut()[0];
+	println!("\n\nExemple\n");
+	let player: &mut Player = &mut _teams[0].get_players_mut()[0];
 
 	player.take_object(Objet::_Food, 3);
 	player.eat();

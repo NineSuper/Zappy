@@ -6,12 +6,12 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:31:03 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/02 14:20:05 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/03 12:51:20 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 use colored::*;
-use crate::player::Player;
+use super::player::Player;
 
 #[derive(Debug, Clone)]
 pub struct Team
