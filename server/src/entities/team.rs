@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:31:03 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/03 12:51:20 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/06 15:40:22 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,8 +101,9 @@ pub fn	create_team(teams: Vec<String>) -> Vec<Team>
 		let new_team: Team = Team::new(&team_name.to_string(), i);
 
 		all_team.push(new_team);
-		println!("{}", format!("Team[{}]: {} ", i, team_name).bold().yellow());
+		println!("{}", format!("Team[{}]: {}", i, team_name).bold().yellow());
 		i += 1;
 	}
+	print!("\n");
 	return all_team;
 }

@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:33:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/03 12:51:27 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/05 13:45:10 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@ use super::object::Objet;
 
 /*
 	* Player._id: ID_TEAM + _ + ID_PLAYER
-	* 3_7 le joueur 7 est dans la team 3
 */
 
 #[derive(Debug, Clone, PartialEq)]
