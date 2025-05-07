@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/07 14:02:23 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/07 15:12:18 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,14 @@ use std::collections::HashMap;
 use colored::*;
 
 #[derive(Debug, Clone)]
-pub struct	ServerConfig
+pub struct	ServerSettings
 {
 	pub port: u32,
 	pub width: u32,
 	pub height: u32,
-	pub _connexion_max: u32,
-	pub _time_unit: u32,
-	pub teams: Vec<String>,
-	// TODO CLIENTS
+	pub connexion_max: u32,
+	pub time_unit: u32,
+	pub teams_name: Vec<String>,
 }
 
 fn	setup_listener(addr: &String) -> TcpListener
@@ -103,11 +102,15 @@ fn	handle_client(clients: &mut HashMap<i32, TcpStream>)
 	}
 }
 
-pub fn	init_server(config: ServerConfig)
+pub fn	server_loop()
 {
-	let	addr: String = format!("127.0.0.1:{}", config.port);
+
+}
+
+pub fn	init_server(port :u32)
+{
+	let	addr: String = format!("127.0.0.1:{}", port);
 	let	listener: TcpListener = setup_listener(&addr);
-	// TODO Faire une classe client
 	let mut	clients: HashMap<i32, TcpStream> = HashMap::new();
 	let mut next_id: i32 = 0;
 

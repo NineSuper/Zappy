@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 13:10:07 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/07 13:23:05 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/07 15:07:44 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,11 @@
 	TODO les clients doivent pouvoir jouer une IA [ ]
 */
 
+use crate::server::server_loop;
 use crate::{server, map, entities};
 
 use colored::Colorize;
-use server::ServerConfig;
+use server::ServerSettings;
 use entities::team::{Team, create_team};
 use entities::object::Objet;
 use entities::player::Player;
@@ -44,12 +45,21 @@ fn	exemple(teams: &mut Vec<Team>, map: &mut Vec<Vec<map::Cell>>)
 	println!("\n{}\n", "-------Exemple------".on_bright_purple());
 }
 
-pub fn	game_init(config: ServerConfig)
+// TODO
+pub fn	game_loop()
+{
+	loop
+	{
+		server_loop();
+	}
+}
+
+pub fn	game_init(config: &mut ServerSettings)
 {
 	let mut	map: Vec<Vec<map::Cell>>;
 	let mut	teams: Vec<Team>;
 
 	map = map::create_map(config.width, config.height);
-	teams = create_team(config.teams.clone());
+	teams = create_team(config.teams_name.clone());
 	exemple(&mut teams, &mut map);
 }

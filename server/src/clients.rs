@@ -1,17 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   mod.rs                                             :+:      :+:    :+:   */
+/*   clients.rs                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/03 12:24:55 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/07 14:49:04 by tde-los-         ###   ########.fr       */
+/*   Created: 2025/05/07 15:11:11 by tde-los-          #+#    #+#             */
+/*   Updated: 2025/05/07 15:12:13 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-pub mod team;
-pub mod player;
-pub mod object;
-pub mod inventory;
-pub mod ia;
+use std::net::TcpStream;
+
+#[derive(Debug, Clone)]
+pub struct	Client
+{
+	stream: TcpStream,
+	id: i32,
+}
+
+impl	Client
+{
+	pub fn new(stream: TcpStream, id: i32) -> Self
+	{
+		Client {stream, id}
+	}
+}

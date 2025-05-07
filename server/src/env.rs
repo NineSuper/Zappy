@@ -6,11 +6,11 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 15:06:42 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/07 13:08:36 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/07 15:08:32 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-use crate::ServerConfig;
+use crate::ServerSettings;
 use std::{char, env::args, process::exit};
 use colored::*;
 
@@ -101,17 +101,17 @@ fn	get_teams(args: &[String]) -> Vec<String>
 	exit(-1);
 }
 
-pub	fn	init_env() -> ServerConfig
+pub	fn	init_env() -> ServerSettings
 {
     let	args: Vec<String> = get_args();
     let port = get_var(&args, 'p');
 	let height = get_var(&args, 'x');
 	let width = get_var(&args, 'y');
-	let clients = get_var(&args, 'c');
+	let connexion_max = get_var(&args, 'c');
 	let time_unit = get_var(&args, 't');
 	let teams = get_teams(&args);
 
-	print_env(port, height, width, clients, time_unit, &teams);
-	return ServerConfig{port, width, height, _connexion_max: clients, _time_unit: time_unit, teams};
+	print_env(port, height, width, connexion_max, time_unit, &teams);
+	return ServerSettings{port, width, height, connexion_max, time_unit, teams_name: teams};
 }
 
