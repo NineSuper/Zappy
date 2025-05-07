@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:31:03 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/06 15:40:22 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/07 13:09:10 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ impl	Team {
 pub fn	create_team(teams: Vec<String>) -> Vec<Team>
 {
 	let mut	all_team: Vec<Team> = vec![];
-	let mut i = 1;
+	let mut i: u32 = 1;
 
 	for team_name in teams
 	{

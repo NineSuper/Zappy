@@ -1,29 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.rs                                            :+:      :+:    :+:   */
+/*   IA.rs                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/29 15:23:47 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/07 13:24:00 by tde-los-         ###   ########.fr       */
+/*   Created: 2025/05/07 13:09:53 by tde-los-          #+#    #+#             */
+/*   Updated: 2025/05/07 13:11:56 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-mod env;
-mod server;
-mod map;
-mod game;
-mod entities;
-
-use game::game_init;
-use	server::{init_server, ServerConfig};
-
-fn	main()
-{
-	let	config: ServerConfig = env::init_env();
-
-	game_init(config.clone());
-	init_server(config.clone());
-}
-
+/*
+	TODO faire l'IA pour les bots (bon courage mon hugo <3)
+*/

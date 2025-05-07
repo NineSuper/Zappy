@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 15:06:42 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/06 18:56:30 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/07 13:08:36 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,6 @@ pub	fn	init_env() -> ServerConfig
 	let teams = get_teams(&args);
 
 	print_env(port, height, width, clients, time_unit, &teams);
-	return ServerConfig{_port: port, width, height, _connexion_max: clients, _time_unit: time_unit, teams};
+	return ServerConfig{port, width, height, _connexion_max: clients, _time_unit: time_unit, teams};
 }
 

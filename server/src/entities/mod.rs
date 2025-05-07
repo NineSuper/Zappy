@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 12:24:55 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/03 12:30:20 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/07 13:24:56 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,3 +14,4 @@ pub mod team;
 pub mod player;
 pub mod object;
 pub mod inventory;
+pub mod IA;
