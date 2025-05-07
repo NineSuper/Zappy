@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/07 13:08:38 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/07 14:02:23 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ pub fn	init_server(config: ServerConfig)
 {
 	let	addr: String = format!("127.0.0.1:{}", config.port);
 	let	listener: TcpListener = setup_listener(&addr);
-	// TODO Faire une classe client avec les bonnes valeurs
+	// TODO Faire une classe client
 	let mut	clients: HashMap<i32, TcpStream> = HashMap::new();
 	let mut next_id: i32 = 0;
 
