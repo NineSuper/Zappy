@@ -6,12 +6,12 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:41:42 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/03 12:51:34 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/08 00:10:47 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 use std::collections::HashMap; // Equivalent de <key, value>
-use super::object::Objet;
+use crate::game::world::object::Objet;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct	Inventory

@@ -1,30 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   game.rs                                            :+:      :+:    :+:   */
+/*   state.rs                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 13:10:07 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/07 15:07:44 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/08 00:11:16 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /*
 	TODO faire game init [x]
+	TODO faire une structure game [ ]
 	TODO faire game loop [ ]
 	TODO faire en sorte que les IA jouent seuls [ ]
 	TODO les clients doivent pouvoir jouer une IA [ ]
 */
 
-use crate::server::server_loop;
-use crate::{server, map, entities};
+use crate::game::entities::team::Team;
+use crate::game::entities::team::create_team;
+use crate::game::entities::player::Player;
+use crate::game::world::map;
+use crate::game::world::map::create_map;
+use crate::game::world::object::Objet;
+use crate::server::{server_loop, ServerSettings};
 
-use colored::Colorize;
-use server::ServerSettings;
-use entities::team::{Team, create_team};
-use entities::object::Objet;
-use entities::player::Player;
+use colored::*;
 
 fn	exemple(teams: &mut Vec<Team>, map: &mut Vec<Vec<map::Cell>>)
 {
@@ -59,7 +61,7 @@ pub fn	game_init(config: &mut ServerSettings)
 	let mut	map: Vec<Vec<map::Cell>>;
 	let mut	teams: Vec<Team>;
 
-	map = map::create_map(config.width, config.height);
+	map = create_map(config.width, config.height);
 	teams = create_team(config.teams_name.clone());
 	exemple(&mut teams, &mut map);
 }

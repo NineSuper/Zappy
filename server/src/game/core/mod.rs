@@ -1,30 +1,13 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   clients.rs                                         :+:      :+:    :+:   */
+/*   mod.rs                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/07 15:11:11 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/07 23:58:26 by tde-los-         ###   ########.fr       */
+/*   Created: 2025/05/07 23:51:54 by tde-los-          #+#    #+#             */
+/*   Updated: 2025/05/08 00:04:43 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-use std::{net::TcpStream, os::unix::net::SocketAddr};
-
-#[derive(Debug)]
-pub struct	Client
-{
-	pub id: i32,
-	pub stream: TcpStream,
-	pub addr: SocketAddr,
-	online: bool,
-}
-
-// impl	Client
-// {
-// 	pub fn	new(stream: TcpStream, id: i32) -> Self
-// 	{
-// 		Client {id, stream}
-// 	}
-// }
+pub mod state;

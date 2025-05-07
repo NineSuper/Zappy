@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/07 15:12:18 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/07 15:28:16 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@ use std::net::{TcpListener, TcpStream};
 use std::process::exit;
 use std::collections::HashMap;
 use colored::*;
+
+use crate::clients::Client;
 
 #[derive(Debug, Clone)]
 pub struct	ServerSettings
@@ -107,9 +109,9 @@ pub fn	server_loop()
 
 }
 
-pub fn	init_server(port :u32)
+pub fn	init_server(config: ServerSettings) -> Vec<Client>
 {
-	let	addr: String = format!("127.0.0.1:{}", port);
+	let	addr: String = format!("127.0.0.1:{}", config.port);
 	let	listener: TcpListener = setup_listener(&addr);
 	let mut	clients: HashMap<i32, TcpStream> = HashMap::new();
 	let mut next_id: i32 = 0;

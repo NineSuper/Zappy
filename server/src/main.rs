@@ -6,18 +6,17 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 15:23:47 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/07 15:16:13 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/08 00:11:38 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+mod server;
+mod game;
 mod env;
 mod clients;
-mod server;
-mod map;
-mod game;
-mod entities;
 
-use game::{game_init, game_loop};
+use clients::Client;
+use game::core::state::{game_init, game_loop};
 use	server::{init_server, ServerSettings};
 
 /*
@@ -28,10 +27,11 @@ use	server::{init_server, ServerSettings};
 fn	main()
 {
 	let mut config: ServerSettings;
+	let mut clients: Vec<Client>;
 
 	config = env::init_env();
 	game_init(&mut config);
-	init_server(config.port);
+	clients = init_server(config);
 	game_loop(); // envoyer config et la structure client
 }
 
