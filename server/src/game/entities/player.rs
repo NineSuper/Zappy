@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:33:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/08 00:08:51 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/08 00:37:14 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,10 +74,10 @@ impl	Player
 	// Le nom de la fonction est vraiment pas fou..
 	pub fn	eat(&mut self) -> bool
 	{
-		if self._inventory.get(Objet::_Food) > 0
+		if self._inventory.get(Objet::Food) > 0
 		{
 			// TODO Ajouter du temps de vie
-			self._inventory.remove(Objet::_Food, 1);
+			self._inventory.remove(Objet::Food, 1);
 			println!("[DEBUG] Joueur: {} vient de manger !", self._id);
 			return true;
 		}

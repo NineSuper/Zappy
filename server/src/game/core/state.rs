@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 13:10:07 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/08 00:11:16 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/08 00:37:32 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,13 +33,13 @@ fn	exemple(teams: &mut Vec<Team>, map: &mut Vec<Vec<map::Cell>>)
 	println!("\n{}\n", "-------Exemple------".on_bright_purple());
 	let player: &mut Player = &mut teams[0].get_players_mut()[0];
 
-	player.take_object(Objet::_Food, 3);
+	player.take_object(Objet::Food, 3);
 	player.eat();
 	player.eat();
-	player.take_object(Objet::_Linemate, 1);
-	player.take_object(Objet::_Sibur, 1);
-	player.take_object(Objet::_Phiras, 1);
-	player.drop_object(Objet::_Food, 1);
+	player.take_object(Objet::Linemate, 1);
+	player.take_object(Objet::Sibur, 1);
+	player.take_object(Objet::Phiras, 1);
+	player.drop_object(Objet::Food, 1);
 	player.eat();
 
 	println!("\n\n{:?}", teams.get(0));

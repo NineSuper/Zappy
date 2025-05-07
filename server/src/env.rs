@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 15:06:42 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/07 15:08:32 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/08 00:34:57 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,37 +21,38 @@ fn	get_args() -> Vec<String>
 	return args;
 }
 
-fn	print_env(port: u32, height: u32, width: u32, clients: u32, time_unit: u32, teams: &[String]) {
-    let line = "🟩=============== Zappy Server ===============🟩";
-    println!("{}", line.green().bold());
+fn	print_env(port: u32, height: u32, width: u32, clients: u32, time_unit: u32, teams: &[String])
+{
+	let line = "🟩=============== Zappy Server ===============🟩";
+	println!("{}", line.green().bold());
 
-    println!(
-        "{} {}",
-        "🌐 IP Address :".green().bold(),
-        format!("127.0.0.1:{}", port).bold().underline()
-    );
-    println!(
-        "{} {}",
-        "📏 Map Size   :".green().bold(),
-        format!("{} x {} px", width, height).bold()
-    );
-    println!(
-        "{} {}",
-        "👥 Clients    :".green().bold(),
-        format!("{}", clients).bold()
-    );
-    println!(
-        "{} {}",
-        "⏱️  Time Unit  :".green().bold(),
-        format!("{}t", time_unit).bold()
-    );
+	println!(
+		"{} {}",
+		"🌐 IP Address :".green().bold(),
+		format!("127.0.0.1:{}", port).bold().underline()
+	);
+	println!(
+		"{} {}",
+		"📏 Map Size   :".green().bold(),
+		format!("{} x {} px", width, height).bold()
+	);
+	println!(
+		"{} {}",
+		"👥 Clients    :".green().bold(),
+		format!("{}", clients).bold()
+	);
+	println!(
+		"{} {}",
+		"⏱️  Time Unit  :".green().bold(),
+		format!("{}t", time_unit).bold()
+	);
 	println!(
 		"{} {}",
 		"🏳️  Teams      :".green().bold(),
 		teams.join(", ").bold()
 	);
 
-    println!("{}", "================================================\n".green().bold());
+	println!("{}", "================================================\n".green().bold());
 }
 
 fn	get_var(args: &[String], flag: char) -> u32
@@ -80,7 +81,8 @@ fn	get_teams(args: &[String]) -> Vec<String>
 {
 	for i in 0..args.len()
 	{
-		if args[i] == "-n" {
+		if args[i] == "-n"
+		{
 			let mut	teams = Vec::new();
 			let mut	j = i + 1;
 
@@ -103,8 +105,8 @@ fn	get_teams(args: &[String]) -> Vec<String>
 
 pub	fn	init_env() -> ServerSettings
 {
-    let	args: Vec<String> = get_args();
-    let port = get_var(&args, 'p');
+	let	args: Vec<String> = get_args();
+	let port = get_var(&args, 'p');
 	let height = get_var(&args, 'x');
 	let width = get_var(&args, 'y');
 	let connexion_max = get_var(&args, 'c');

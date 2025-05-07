@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 21:54:08 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/02 10:15:37 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/08 00:40:31 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,54 +15,43 @@ use rand::rngs::ThreadRng;
 use rand::rng;
 
 use colored::*;
-
-#[derive(Debug, Clone)]
-pub enum	Resource
-{
-    Food,
-    Linemate,
-    Deraumere,
-    Sibur,
-    Mendiane,
-    Phiras,
-    Thystame,
-}
+use super::object::Objet;
 
 #[derive(Debug, Clone)]
 pub struct	Cell
 {
-    pub content: Option<Resource>,
+	pub content: Option<Objet>,
 }
 
 pub type	Map = Vec<Vec<Cell>>;
 
 pub fn	create_map(width: u32, height: u32) -> Map
 {
-	println!("{}", "Création du monde...".bold());
-    let mut rng: ThreadRng = rng();
-    let mut map: Vec<Vec<Cell>> = vec![vec![Cell { content: None }; width as usize]; height as usize];
+	println!("{}", "[INFO] Création du monde...".bold().green());
+	let mut rng: ThreadRng = rng();
+	let mut map: Vec<Vec<Cell>> = vec![vec![Cell { content: None }; width as usize]; height as usize];
 
-    for row in map.iter_mut()
+	for row in map.iter_mut()
 	{
-        for cell in row.iter_mut()
+		for cell in row.iter_mut()
 		{
-            if rng.random_bool(0.30)
+			if rng.random_bool(0.30) // 30% de chance d'avoir un objet sur une cellule
 			{
-                let res: Resource = match rng.random_range(0..7)
+				let res: Objet = match rng.random_range(0..7)
 				{
-                    0 => Resource::Food,
-                    1 => Resource::Linemate,
-                    2 => Resource::Deraumere,
-                    3 => Resource::Sibur,
-                    4 => Resource::Mendiane,
-                    5 => Resource::Phiras,
-                    _ => Resource::Thystame,
-                };
-                cell.content = Some(res);
-            }
-        }
-    }
-	println!("{}", "Monde généré !\n".bold());
-    return map;
+					0 => Objet::Food,
+					1 => Objet::Linemate,
+					2 => Objet::Deraumere,
+					3 => Objet::Sibur,
+					4 => Objet::Mendiane,
+					5 => Objet::Phiras,
+					_ => Objet::Thystame,
+				};
+				cell.content = Some(res);
+			}
+		}
+	}
+	println!("{}", "[INFO] Monde généré !\n".bold().green());
+	return map;
 }
 

@@ -6,11 +6,12 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:31:03 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/07 13:09:10 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/08 00:56:16 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 use colored::*;
+use crate::utils::get_random_color;
 use super::player::Player;
 
 #[derive(Debug, Clone)]
@@ -101,7 +102,7 @@ pub fn	create_team(teams: Vec<String>) -> Vec<Team>
 		let new_team: Team = Team::new(&team_name.to_string(), i);
 
 		all_team.push(new_team);
-		println!("{}", format!("Team[{}]: {}", i, team_name).bold().yellow());
+		println!("{}", format!("Team[{i}]: {}", team_name.color(get_random_color())).yellow());
 		i += 1;
 	}
 	print!("\n");
