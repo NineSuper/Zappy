@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:11:11 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/09 11:07:04 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/09 12:30:16 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ impl	Client
 		}
 	}
 
-	pub fn	disconnet(&self)
+	pub fn	disconnect(&mut self)
 	{
 		let id = self.id;
 		println!("{} {}", format!("[INFO] Client [{id}] déconnecté:").green(), self.addr);
@@ -69,3 +69,11 @@ impl	Client
 	}
 }
 
+
+impl	Drop for Client
+{
+	fn	drop(&mut self)
+	{
+		self.disconnect();
+	}
+}

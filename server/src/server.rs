@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/09 12:11:55 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/09 12:32:34 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,6 @@ fn	disconnect_client(clients: &mut HashMap<i32, Client>, id: i32)
 {
 	if let Some(client) = clients.get(&id)
 	{
-		client.disconnet();
 		clients.remove(&id);
 	}
 	else
@@ -92,7 +91,8 @@ fn	handle_client(clients: &mut HashMap<i32, Client>)
 		match stream.read(&mut buf)
 		{
 			Ok(0) => {to_remove.push(*id);}
-			Ok(received) => {
+			Ok(received) =>
+			{
 				let msg = String::from_utf8_lossy(&buf[..received]);
 
 				println!("[DEBUG] Client [{id}] a envoyé : {}", msg.replace("\n", ""));
