@@ -6,62 +6,45 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 13:10:07 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/08 00:37:32 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/09 12:10:20 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /*
 	TODO faire game init [x]
-	TODO faire une structure game [ ]
-	TODO faire game loop [ ]
+	TODO faire une structure game [x]
+	TODO faire game loop [x]
 	TODO faire en sorte que les IA jouent seuls [ ]
 	TODO les clients doivent pouvoir jouer une IA [ ]
 */
 
-use crate::game::entities::team::Team;
-use crate::game::entities::team::create_team;
-use crate::game::entities::player::Player;
+use crate::app::AppState;
+
 use crate::game::world::map;
-use crate::game::world::map::create_map;
-use crate::game::world::object::Objet;
+use crate::game::entities::team::{self, Team};
+use crate::game::world::map::Cell;
 use crate::server::{server_loop, ServerSettings};
 
-use colored::*;
-
-fn	exemple(teams: &mut Vec<Team>, map: &mut Vec<Vec<map::Cell>>)
+#[derive(Debug, Clone)]
+pub struct	GameState
 {
-	println!("\n{}\n", "-------Exemple------".on_bright_purple());
-	let player: &mut Player = &mut teams[0].get_players_mut()[0];
-
-	player.take_object(Objet::Food, 3);
-	player.eat();
-	player.eat();
-	player.take_object(Objet::Linemate, 1);
-	player.take_object(Objet::Sibur, 1);
-	player.take_object(Objet::Phiras, 1);
-	player.drop_object(Objet::Food, 1);
-	player.eat();
-
-	println!("\n\n{:?}", teams.get(0));
-	println!("{:?}", map[0][0]);
-	println!("\n{}\n", "-------Exemple------".on_bright_purple());
+	pub	map: Vec<Vec<Cell>>,
+	pub	teams: Vec<Team>,
 }
 
-// TODO
-pub fn	game_loop()
+pub fn	game_loop(app_state: &mut AppState)
 {
 	loop
 	{
-		server_loop();
+		server_loop(&mut app_state.server);
 	}
 }
 
-pub fn	game_init(config: &mut ServerSettings)
+pub fn	game_init(config: &mut ServerSettings) -> GameState
 {
-	let mut	map: Vec<Vec<map::Cell>>;
-	let mut	teams: Vec<Team>;
-
-	map = create_map(config.width, config.height);
-	teams = create_team(config.teams_name.clone());
-	exemple(&mut teams, &mut map);
+	GameState
+	{
+		map: map::create_map(config.width, config.height),
+		teams: team::create_team(config.teams_name.clone()),
+	}
 }

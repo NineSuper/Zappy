@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:33:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/08 00:37:14 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/09 12:20:13 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,11 @@ use crate::game::world::object::Objet;
 #[derive(Debug, Clone, PartialEq)]
 pub struct	Player
 {
-	_id: String,
-	_pos_x: i64,
-	_pos_y: i64,
-	_dead: bool,
-	_inventory: Inventory,
+	id: String,
+	pos_x: i64,
+	pos_y: i64,
+	dead: bool,
+	inventory: Inventory,
 }
 
 impl	Player
@@ -33,18 +33,18 @@ impl	Player
 	{
         Self
 		{
-			_id: id,
-			_pos_x: 15, // TODO
-			_pos_y: 16, // TODO
-			_dead: false,
-			_inventory: Inventory::new(),
+			id,
+			pos_x: 15, // TODO
+			pos_y: 16, // TODO
+			dead: false,
+			inventory: Inventory::new(),
         }
     }
 
 	pub fn	take_object(&mut self, obj: Objet, amount: u32) -> bool
 	{
 		// TODO gérer le cas où il ne peut pas prendre l'objet
-		self._inventory.add(obj, amount);
+		self.inventory.add(obj, amount);
 		return true;
 	}
 
@@ -52,36 +52,36 @@ impl	Player
 	{
 		// TODO gérer le cas où il ne peut pas drop l'objet
 		// + Mettre au sol l'objet laché
-		return self._inventory.remove(obj, amount);
+		return self.inventory.remove(obj, amount);
 	}
 
 	pub fn	get_id(&self) -> String
 	{
-		return self._id.clone();
+		return self.id.clone();
 	}
 
 	pub fn	is_dead(&self) -> bool
 	{
-		return self._dead;
+		return self.dead;
 	}
 
 	// Retourne un tuple de coordonées (x, y)
 	pub fn	get_position(&self) -> (i64, i64)
 	{
-		return (self._pos_x, self._pos_y);
+		return (self.pos_x, self.pos_y);
 	}
 
 	// Le nom de la fonction est vraiment pas fou..
 	pub fn	eat(&mut self) -> bool
 	{
-		if self._inventory.get(Objet::Food) > 0
+		if self.inventory.get(Objet::Food) > 0
 		{
 			// TODO Ajouter du temps de vie
-			self._inventory.remove(Objet::Food, 1);
-			println!("[DEBUG] Joueur: {} vient de manger !", self._id);
+			self.inventory.remove(Objet::Food, 1);
+			println!("[DEBUG] Joueur: {} vient de manger !", self.id);
 			return true;
 		}
-		println!("[DEBUG] Joueur: {} ne peut pas manger !", self._id);
+		println!("[DEBUG] Joueur: {} ne peut pas manger !", self.id);
 		return false;
 	}
 }

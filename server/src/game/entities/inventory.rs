@@ -6,11 +6,11 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:41:42 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/08 00:10:47 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/09 12:18:46 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-use std::collections::HashMap; // Equivalent de <key, value>
+use std::collections::HashMap;
 use crate::game::world::object::Objet;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -52,7 +52,7 @@ impl	Inventory
 		return false;
 	}
 
-	pub fn get(&self, obj: Objet) -> u32
+	pub fn	get(&self, obj: Objet) -> u32
 	{
 		return *self.objects.get(&obj).unwrap_or(&0);
 	}

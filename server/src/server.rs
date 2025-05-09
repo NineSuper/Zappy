@@ -6,12 +6,12 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/07 15:28:16 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/09 12:11:55 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 use std::io::Read;
-use std::net::{TcpListener, TcpStream};
+use std::net::TcpListener;
 use std::process::exit;
 use std::collections::HashMap;
 use colored::*;
@@ -27,6 +27,14 @@ pub struct	ServerSettings
 	pub connexion_max: u32,
 	pub time_unit: u32,
 	pub teams_name: Vec<String>,
+}
+
+#[derive(Debug)]
+pub struct	ServerState
+{
+	pub	clients: HashMap<i32, Client>,
+	pub	listener: TcpListener,
+	pub next_id: i32,
 }
 
 fn	setup_listener(addr: &String) -> TcpListener
@@ -47,29 +55,23 @@ fn	setup_listener(addr: &String) -> TcpListener
 	}
 }
 
-fn	accept_new_client(clients: &mut HashMap<i32, TcpStream>, listener: &TcpListener, next_id: &mut i32)
+fn	accept_new_client(clients: &mut HashMap<i32, Client>, listener: &TcpListener, next_id: &mut i32)
 {
 	if let Ok((stream, addr)) = listener.accept()
 	{
-		println!("{} {addr}", format!("[INFO] Client [{next_id}] connecté:").green());
-		stream.set_nonblocking(true).expect("Cannot set non-blocking");
-		clients.insert(*next_id, stream);
+		let client = Client::new(stream, addr, *next_id);
+		client.set_nonblocking();
+		clients.insert(*next_id, client);
 		*next_id += 1;
 	}
 }
 
-fn	disconnect_client(clients: &mut HashMap<i32, TcpStream>, id: i32)
+fn	disconnect_client(clients: &mut HashMap<i32, Client>, id: i32)
 {
-	if let Some(stream) = clients.remove(&id)
+	if let Some(client) = clients.get(&id)
 	{
-		if let Ok(addr) = stream.peer_addr()
-		{
-			println!("{} {addr}", format!("[INFO] Client [{id}] déconnecté:").green());
-		}
-		else
-		{
-			println!("{} addresse inconnue", format!("[INFO] Client [{id}] déconnecté:").green());
-		}
+		client.disconnet();
+		clients.remove(&id);
 	}
 	else
 	{
@@ -77,13 +79,15 @@ fn	disconnect_client(clients: &mut HashMap<i32, TcpStream>, id: i32)
 	}
 }
 
-fn	handle_client(clients: &mut HashMap<i32, TcpStream>)
+//TODO
+fn	handle_client(clients: &mut HashMap<i32, Client>)
 {
 	let mut to_remove: Vec<i32> = vec![];
 
-	for (id, stream) in clients.iter_mut()
+	for (id, client) in clients.iter_mut()
 	{
 		let mut buf = [0; 1024];
+		let mut stream = client.get_stream();
 
 		match stream.read(&mut buf)
 		{
@@ -104,21 +108,16 @@ fn	handle_client(clients: &mut HashMap<i32, TcpStream>)
 	}
 }
 
-pub fn	server_loop()
+pub fn	server_loop(server: &mut ServerState)
 {
-
+	accept_new_client(&mut server.clients, &server.listener, &mut server.next_id);
+	handle_client(&mut server.clients);
 }
 
-pub fn	init_server(config: ServerSettings) -> Vec<Client>
+pub fn	init_server(config: &ServerSettings) -> TcpListener
 {
 	let	addr: String = format!("127.0.0.1:{}", config.port);
 	let	listener: TcpListener = setup_listener(&addr);
-	let mut	clients: HashMap<i32, TcpStream> = HashMap::new();
-	let mut next_id: i32 = 0;
 
-	loop
-	{
-		accept_new_client(&mut clients, &listener, &mut next_id);
-		handle_client(&mut clients);
-	}
+	return listener;
 }

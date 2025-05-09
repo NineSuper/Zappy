@@ -6,33 +6,38 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 15:23:47 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/08 00:58:11 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/09 12:08:55 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+mod app;
 mod server;
 mod game;
 mod env;
 mod clients;
 mod utils;
 
-use clients::Client;
+use app::AppState;
 use game::core::state::{game_init, game_loop};
-use	server::{init_server, ServerSettings};
+use	server::{init_server, ServerSettings, ServerState};
 
-/*
-	TODO faire une structure "Client" que init_server doit renvoyer,
-	afin de pouvoir traiter les infos client dans game_loop
-*/
+use std::collections::HashMap;
 
 fn	main()
 {
-	let mut config: ServerSettings;
-	let mut _clients: Vec<Client>;
+	let mut	config: ServerSettings = env::init_env();
 
-	config = env::init_env();
-	game_init(&mut config);
-	_clients = init_server(config);
-	game_loop(); // envoyer config et la structure client
+	let mut app_state: AppState = AppState
+	{
+		game: game_init(&mut config),
+		server: ServerState
+		{
+			clients: HashMap::new(),
+			listener: init_server(&config),
+			next_id: 0,
+		},
+		config: config,
+	};
+	game_loop(&mut app_state);
 }
 

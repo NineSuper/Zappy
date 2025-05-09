@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 21:54:08 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/08 00:40:31 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/08 01:04:05 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,13 +39,13 @@ pub fn	create_map(width: u32, height: u32) -> Map
 			{
 				let res: Objet = match rng.random_range(0..7)
 				{
-					0 => Objet::Food,
+					0 => Objet::Thystame,
 					1 => Objet::Linemate,
 					2 => Objet::Deraumere,
 					3 => Objet::Sibur,
 					4 => Objet::Mendiane,
 					5 => Objet::Phiras,
-					_ => Objet::Thystame,
+					_ => Objet::Food,
 				};
 				cell.content = Some(res);
 			}

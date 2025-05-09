@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 15:06:42 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/08 00:34:57 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/09 12:14:55 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ fn	get_args() -> Vec<String>
 	return args;
 }
 
-fn	print_env(port: u32, height: u32, width: u32, clients: u32, time_unit: u32, teams: &[String])
+fn	print_env(config: ServerSettings)
 {
 	let line = "🟩=============== Zappy Server ===============🟩";
 	println!("{}", line.green().bold());
@@ -29,27 +29,27 @@ fn	print_env(port: u32, height: u32, width: u32, clients: u32, time_unit: u32, t
 	println!(
 		"{} {}",
 		"🌐 IP Address :".green().bold(),
-		format!("127.0.0.1:{}", port).bold().underline()
+		format!("127.0.0.1:{}", config.port).bold().underline()
 	);
 	println!(
 		"{} {}",
 		"📏 Map Size   :".green().bold(),
-		format!("{} x {} px", width, height).bold()
+		format!("{} x {} px", config.width, config.height).bold()
 	);
 	println!(
 		"{} {}",
-		"👥 Clients    :".green().bold(),
-		format!("{}", clients).bold()
+		"👥 Connexion Max    :".green().bold(),
+		format!("{}", config.connexion_max).bold()
 	);
 	println!(
 		"{} {}",
 		"⏱️  Time Unit  :".green().bold(),
-		format!("{}t", time_unit).bold()
+		format!("{}t", config.time_unit).bold()
 	);
 	println!(
 		"{} {}",
 		"🏳️  Teams      :".green().bold(),
-		teams.join(", ").bold()
+		config.teams_name.join(", ").bold()
 	);
 
 	println!("{}", "================================================\n".green().bold());
@@ -106,14 +106,16 @@ fn	get_teams(args: &[String]) -> Vec<String>
 pub	fn	init_env() -> ServerSettings
 {
 	let	args: Vec<String> = get_args();
-	let port = get_var(&args, 'p');
-	let height = get_var(&args, 'x');
-	let width = get_var(&args, 'y');
-	let connexion_max = get_var(&args, 'c');
-	let time_unit = get_var(&args, 't');
-	let teams = get_teams(&args);
-
-	print_env(port, height, width, connexion_max, time_unit, &teams);
-	return ServerSettings{port, width, height, connexion_max, time_unit, teams_name: teams};
+	let config = ServerSettings
+	{
+		port: get_var(&args, 'p'),
+		height: get_var(&args, 'x'),
+		width: get_var(&args, 'y'),
+		connexion_max: get_var(&args, 'c'),
+		time_unit: get_var(&args, 't'),
+		teams_name: get_teams(&args)
+	};
+	print_env(config.clone());
+	return config;
 }
 
