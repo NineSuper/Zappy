@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:33:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/09 12:20:13 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/13 10:44:54 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ impl	Player
 	{
         Self
 		{
-			id,
+			id: id,
 			pos_x: 15, // TODO
 			pos_y: 16, // TODO
 			dead: false,
@@ -55,23 +55,6 @@ impl	Player
 		return self.inventory.remove(obj, amount);
 	}
 
-	pub fn	get_id(&self) -> String
-	{
-		return self.id.clone();
-	}
-
-	pub fn	is_dead(&self) -> bool
-	{
-		return self.dead;
-	}
-
-	// Retourne un tuple de coordonées (x, y)
-	pub fn	get_position(&self) -> (i64, i64)
-	{
-		return (self.pos_x, self.pos_y);
-	}
-
-	// Le nom de la fonction est vraiment pas fou..
 	pub fn	eat(&mut self) -> bool
 	{
 		if self.inventory.get(Objet::Food) > 0
@@ -81,7 +64,16 @@ impl	Player
 			println!("[DEBUG] Joueur: {} vient de manger !", self.id);
 			return true;
 		}
-		println!("[DEBUG] Joueur: {} ne peut pas manger !", self.id);
+		println!("[DEBUG] Joueur: {} n'a pas de nourriture !", self.id);
 		return false;
 	}
+
+	// Retourne un tuple de coordonées (x, y)
+	pub fn	get_position(&self) -> (i64, i64)
+	{
+		return (self.pos_x, self.pos_y);
+	}
+
+	pub fn	get_id(&self) -> String { self.id.clone() }
+	pub fn	is_dead(&self) -> bool { self.dead }
 }

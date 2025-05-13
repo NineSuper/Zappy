@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:31:03 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/09 12:18:13 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/13 10:48:15 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ impl	Team
 			connect_nbr: 1, // TODO
 		};
 
-		team.add_player();
+		team.add_player(); // On commence avec un jour dans la team
 		return team;
 	}
 
@@ -59,27 +59,9 @@ impl	Team
 		}
 	}
 
-	pub fn	get_level(&mut self) -> u16
-	{
-		return self.level;
-	}
-
 	pub fn	add_level(&mut self)
 	{
-		if self.level < 6
-		{
-			self.level += 1;
-		}
-	}
-
-	pub fn	get_players(&self) -> &Vec<Player>
-	{
-		return &self.players;
-	}
-
-	pub fn	get_players_mut(&mut self) -> &mut Vec<Player>
-	{
-		return &mut self.players;
+		self.level += 1;
 	}
 
 	pub fn	add_connect_nbr(&mut self)
@@ -87,10 +69,10 @@ impl	Team
 		self.connect_nbr += 1;
 	}
 
-	pub fn	get_connect_nbr(&self) -> u32
-	{
-		return self.connect_nbr;
-	}
+	pub fn	get_level(&mut self) -> u16 { self.level }
+	pub fn	get_players(&self) -> &Vec<Player> { &self.players }
+	pub fn	get_players_mut(&mut self) -> &mut Vec<Player> { &mut self.players }
+	pub fn	get_connect_nbr(&self) -> u32 { self.connect_nbr }
 }
 
 pub fn	create_team(teams: Vec<String>) -> Vec<Team>

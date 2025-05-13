@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 15:06:42 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/09 12:14:55 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/12 14:02:25 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ fn	print_env(config: ServerSettings)
 	);
 	println!(
 		"{} {}",
-		"👥 Connexion Max    :".green().bold(),
+		"👥 Connexion Max :".green().bold(),
 		format!("{}", config.connexion_max).bold()
 	);
 	println!(

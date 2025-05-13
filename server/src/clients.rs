@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:11:11 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/09 12:30:16 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/13 10:30:46 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,9 @@ impl	Client
 		println!("{} {addr}", format!("[INFO] Client [{id}] connecté:").green());
 		Self
 		{
-			id,
-			stream,
-			addr,
+			id: id,
+			stream: stream,
+			addr: addr,
 			online: true,
 		}
 	}
@@ -48,27 +48,11 @@ impl	Client
 		self.stream.set_nonblocking(true).expect("Cannot set non-blocking");
 	}
 
-	pub	fn	get_stream(&self) -> &TcpStream
-	{
-		return &self.stream;
-	}
-
-	pub fn	get_addr(&self) -> SocketAddr
-	{
-		self.addr
-	}
-
-	pub fn	get_ip(&self) -> IpAddr
-	{
-		self.addr.ip()
-	}
-
-	pub fn	get_port(&self) -> u16
-	{
-		self.addr.port()
-	}
+	pub	fn	get_stream(&self) -> &TcpStream { &self.stream }
+	pub fn	get_addr(&self) -> SocketAddr { self.addr }
+	pub fn	get_ip(&self) -> IpAddr { self.addr.ip() }
+	pub fn	get_port(&self) -> u16 { self.addr.port() }
 }
-
 
 impl	Drop for Client
 {

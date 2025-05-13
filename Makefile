@@ -5,10 +5,12 @@ NAME = Zappy
 
 ifeq ($(UNAME_S),Linux)		# Linux
     # LFLAGS =
+	INSTALL_DEP = apt install cargo -y
 endif
 
 ifeq ($(UNAME_S),Darwin)	# macOS
     # LFLAGS =
+	INSTALL_DEP =
 endif
 
 BIN_DIR		= bin
@@ -108,6 +110,9 @@ all:
 	@$(MAKE) client
 	@$(MAKE) gfx
 	@$(EXE_READY)
+
+install:
+	$(INSTALL_DEP)
 
 server:
 	@$(SERV_START)

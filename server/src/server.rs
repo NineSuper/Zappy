@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/09 12:32:34 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/13 11:18:21 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ pub struct	ServerState
 	pub	clients: HashMap<i32, Client>,
 	pub	listener: TcpListener,
 	pub next_id: i32,
+	pub connexion_max: u32,
 }
 
 fn	setup_listener(addr: &String) -> TcpListener
@@ -55,25 +56,23 @@ fn	setup_listener(addr: &String) -> TcpListener
 	}
 }
 
-fn	accept_new_client(clients: &mut HashMap<i32, Client>, listener: &TcpListener, next_id: &mut i32)
+fn	accept_new_client(server: &mut ServerState)
 {
-	if let Ok((stream, addr)) = listener.accept()
+	if let Ok((stream, addr)) = server.listener.accept()
 	{
-		let client = Client::new(stream, addr, *next_id);
+		let client = Client::new(stream, addr, server.next_id);
 		client.set_nonblocking();
-		clients.insert(*next_id, client);
-		*next_id += 1;
+		server.clients.insert(server.next_id, client);
+		server.next_id += 1;
 	}
 }
 
 fn	disconnect_client(clients: &mut HashMap<i32, Client>, id: i32)
 {
-	if let Some(client) = clients.get(&id)
-	{
+	if let Some(_client) = clients.get(&id) {
 		clients.remove(&id);
 	}
-	else
-	{
+	else {
 		print!("{}", "[ERROR] Client inconnu déconnecté !".red())
 	}
 }
@@ -85,8 +84,8 @@ fn	handle_client(clients: &mut HashMap<i32, Client>)
 
 	for (id, client) in clients.iter_mut()
 	{
-		let mut buf = [0; 1024];
 		let mut stream = client.get_stream();
+		let mut buf = [0; 1024];
 
 		match stream.read(&mut buf)
 		{
@@ -110,7 +109,10 @@ fn	handle_client(clients: &mut HashMap<i32, Client>)
 
 pub fn	server_loop(server: &mut ServerState)
 {
-	accept_new_client(&mut server.clients, &server.listener, &mut server.next_id);
+	if server.clients.len() < server.connexion_max.try_into().unwrap()
+	{
+		accept_new_client(server);
+	}
 	handle_client(&mut server.clients);
 }
 
