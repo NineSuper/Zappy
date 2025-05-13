@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:31:03 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/13 10:48:15 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/13 16:46:48 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,14 +80,15 @@ pub fn	create_team(teams: Vec<String>) -> Vec<Team>
 	let mut	all_team: Vec<Team> = vec![];
 	let mut i: u32 = 1;
 
+	println!("{}", "[INFO] Création des équipes...".bold().green());
 	for team_name in teams
 	{
 		let new_team: Team = Team::new(&team_name.to_string(), i);
 
 		all_team.push(new_team);
-		println!("{}", format!("Team[{i}]: {}", team_name.color(get_random_color())).yellow());
+		println!("{} #{i}: {}", format!("[Team]").magenta().bold(), team_name.color(get_random_color()).bold());
 		i += 1;
 	}
-	print!("\n");
+	println!("{}", "[INFO] Les équipes ont été créées !\n".bold().green());
 	return all_team;
 }

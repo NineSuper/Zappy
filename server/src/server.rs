@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/13 11:18:21 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/13 16:50:32 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ fn	setup_listener(addr: &String) -> TcpListener
 	{
 		Ok(listener) => {
 			listener.set_nonblocking(true).expect("Cannot set non-blocking");
-			println!("✅ Serveur ouvert sur: {}\n", addr);
+			println!("🌍 Serveur ouvert sur: {}\n", addr);
 			return listener;
 		}
 		Err(e) => {
@@ -73,7 +73,7 @@ fn	disconnect_client(clients: &mut HashMap<i32, Client>, id: i32)
 		clients.remove(&id);
 	}
 	else {
-		print!("{}", "[ERROR] Client inconnu déconnecté !".red())
+		print!("{}", "[ERROR] Client inconnu déconnecté !".red().bold())
 	}
 }
 
@@ -94,23 +94,22 @@ fn	handle_client(clients: &mut HashMap<i32, Client>)
 			{
 				let msg = String::from_utf8_lossy(&buf[..received]);
 
-				println!("[DEBUG] Client [{id}] a envoyé : {}", msg.replace("\n", ""));
+				client.add_command(msg.to_string());
+				client.remove_command(); // DEBUG
 			}
 			Err(_) => {
 				// to_remove.push(*id);
 			}
 		}
 	}
-	for id in to_remove
-	{
+	for id in to_remove {
 		disconnect_client(clients, id);
 	}
 }
 
 pub fn	server_loop(server: &mut ServerState)
 {
-	if server.clients.len() < server.connexion_max.try_into().unwrap()
-	{
+	if server.clients.len() < server.connexion_max.try_into().unwrap() {
 		accept_new_client(server);
 	}
 	handle_client(&mut server.clients);

@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 11:26:44 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/12 14:11:49 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/13 12:27:18 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,5 +19,5 @@ pub struct AppState
 {
 	pub	game: GameState,
 	pub	server: ServerState,
-	pub	config: ServerSettings,
+	pub	settings: ServerSettings,
 }
