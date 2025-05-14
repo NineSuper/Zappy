@@ -33,21 +33,16 @@ Les habitants de Trantor ont deux objectifs majeurs :
 
 ---
 
-## 💿 Installation
+## 💿 Installation des dépendences
 
-🐧 Linux:
+🐧 Linux & MacOS 🍎:
 
-    - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-
-
-🍎 MacOS:
-
-    - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    make install
 
 ✅ Vérification:
 
-    - rustc --version
-    - cargo --version
+    rustc --version
+    cargo --version
 
 
 ## 🗄️ Serveur
