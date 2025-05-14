@@ -33,6 +33,23 @@ Les habitants de Trantor ont deux objectifs majeurs :
 
 ---
 
+## 💿 Installation
+
+🐧 Linux:
+
+    - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+
+🍎 MacOS:
+
+    - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+✅ Vérification:
+
+    - rustc --version
+    - cargo --version
+
+
 ## 🗄️ Serveur
 
 ```
@@ -42,21 +59,24 @@ make ou make server
 ```
 ./bin/server -p <port> -x <width> -y <height> -n <team> [<team>] [<team>] ... -c <nb> -t <t>
 
--p port number
--x world width
--y world height
--n team\_name\_1 team\_name\_2 ...
--c number of clients authorized at the beginning of the game
--t time unit divider (the greater t is, the faster the game will go)
+    -p port number
+    -x world width
+    -y world height
+    -n team\_name\_1 team\_name\_2 ...
+    -c number of clients authorized at the beginning of the game
+    -t time unit divider (the greater t is, the faster the game will go)
 ```
-
-> *(À compléter avec les détails techniques)*
 
 ## 🎮 Client
 
-> *(À compléter avec les détails techniques)*
+```
+make ou make client
+```
 
-## 💿 Installation
+```
+./bin/client -n <team> -p <port> [-h <hostname>]
 
-    - installer blablablablabla
-    - puis faire blablablabla
+    -n team\_name
+    -p port
+    -h name of the host, by default it'll be localhost
+```
