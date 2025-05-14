@@ -20,13 +20,15 @@ SERVER_CC 	= cargo build
 SERVER_FLAG = --release
 SERVER_DIR 	= server
 SERVER_SRC 	= $(SERVER_DIR)/src
+SERVER_DEBUG = RUSTFLAGS="-Awarnings" # enlève les warnings mais pas les erreurs
 
 # TODO
 CLIENT_BIN 	= $(BIN_DIR)/client
-CLIENT_CC  	=
-CLIENT_FLAG =
+CLIENT_CC  	= cargo build
+CLIENT_FLAG = --release
 CLIENT_DIR 	= client
 CLIENT_SRC 	= $(CLIENT_DIR)/src
+SERVER_DEBUG = RUSTFLAGS="-Awarnings" # enlève les warnings mais pas les erreurs
 
 # TODO
 GFX_BIN 	= $(BIN_DIR)/gfx
@@ -67,7 +69,7 @@ CLEANED         =       echo "\n💧 $(B_CYAN)Clean: $(NO_COLOR)$(BOLD)Suppressi
 
 FCLEANED        =       echo "\n🧼 $(B_CYAN)Fclean: $(NO_COLOR)$(BOLD)Suppression des fichiers (binaire + objets + libs)$(NO_COLOR)\n"
 
-SERV_START		=		printf "\n🪩  $(B_YELLOW)Server: $(NO_COLOR)$(BOLD)Debut de compilation...\r$(NO_COLOR)\n"
+SERV_START		=		printf "\n🪩  $(B_YELLOW)Server: $(NO_COLOR)$(BOLD)Debut de compilation...\r$(NO_COLOR)\n\n"
 
 SERV_READY		=		echo "\n🪩  $(B_YELLOW)Server: $(NO_COLOR)$(BOLD)Compilation terminée ✅$(NO_COLOR)\n"
 
@@ -120,9 +122,21 @@ server:
 	@cp $(SERVER_DIR)/target/release/$(notdir $(SERVER_DIR)) $(SERVER_BIN)
 	@$(SERV_READY)
 
+server_clean:
+	rm -f $(SERVER_BIN)
+	@cd $(SERVER_DIR) && cargo clean
+	rm -f $(SERVER_DIR)/*.lock
+
 client:
 	@$(CLIENT_START)
-#	@$(CLIENT_READY)
+	@cd $(CLIENT_DIR) && $(CLIENT_CC) $(CLIENT_FLAG)
+	@cp $(CLIENT_DIR)/target/release/$(notdir $(CLIENT_DIR)) $(CLIENT_BIN)
+	@$(CLIENT_READY)
+
+client_clean:
+	rm -f $(CLIENT_BIN)
+	@cd $(CLIENT_DIR) && cargo clean
+	rm -f $(CLIENT_DIR)/*.lock
 
 gfx:
 	@$(GFX_START)
@@ -132,16 +146,14 @@ comp_start:
 	@$(HEADER_COMP)
 
 clean:
-	rm -f $(SERVER_BIN)
-	@cd $(SERVER_DIR) && cargo clean
-	rm -f $(SERVER_DIR)/*.lock
-	rm -f $(CLIENT_BIN)
-	rm -f $(GFX_BIN)
 	$(CLEANED)
+	@$(MAKE) server_clean
+	@$(MAKE) client_clean
+	rm -f $(GFX_BIN)
 
 fclean: clean
 	$(FCLEANED)
 
 re: fclean all
 
-.PHONY: all server client gfx comp_start clean fclean re
+.PHONY: all server client gfx comp_start clean fclean re server_clean client_clean
