@@ -4,5 +4,5 @@ edition = "2021"
 version = "0.0.1"
 
 [dependencies]
-colored = "2.0.4"
+colored = "3.0.0"
 rand = "0.9.1"
