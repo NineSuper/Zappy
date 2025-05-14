@@ -5,12 +5,12 @@ NAME = Zappy
 
 ifeq ($(UNAME_S),Linux)		# Linux
     # LFLAGS =
-	INSTALL_DEP = apt install cargo -y
+	INSTALL_DEP = curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 endif
 
 ifeq ($(UNAME_S),Darwin)	# macOS
     # LFLAGS =
-	INSTALL_DEP =
+	INSTALL_DEP = curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 endif
 
 BIN_DIR		= bin
@@ -20,7 +20,7 @@ SERVER_CC 	= cargo build
 SERVER_FLAG = --release
 SERVER_DIR 	= server
 SERVER_SRC 	= $(SERVER_DIR)/src
-SERVER_DEBUG = RUSTFLAGS="-Awarnings" # enlève les warnings mais pas les erreurs
+SERVER_DEBUG = RUSTFLAGS="-Awarnings"
 
 # TODO
 CLIENT_BIN 	= $(BIN_DIR)/client
@@ -28,7 +28,7 @@ CLIENT_CC  	= cargo build
 CLIENT_FLAG = --release
 CLIENT_DIR 	= client
 CLIENT_SRC 	= $(CLIENT_DIR)/src
-SERVER_DEBUG = RUSTFLAGS="-Awarnings" # enlève les warnings mais pas les erreurs
+SERVER_DEBUG = RUSTFLAGS="-Awarnings"
 
 # TODO
 GFX_BIN 	= $(BIN_DIR)/gfx
