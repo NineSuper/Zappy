@@ -5,12 +5,12 @@ NAME = Zappy
 
 ifeq ($(UNAME_S),Linux)		# Linux
     # LFLAGS =
-	INSTALL_DEP = curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+	INSTALL_DEP = curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 endif
 
 ifeq ($(UNAME_S),Darwin)	# macOS
     # LFLAGS =
-	INSTALL_DEP = curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+	INSTALL_DEP = curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 endif
 
 BIN_DIR		= bin
