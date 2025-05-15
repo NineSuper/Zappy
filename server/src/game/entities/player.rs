@@ -6,12 +6,14 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:33:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/13 10:44:54 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/14 14:58:21 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 use super::inventory::Inventory;
-use crate::game::world::object::Objet;
+use crate::game::world::{map, object::Objet};
+
+use colored::*;
 
 /*
 	* Player._id: ID_TEAM + _ + ID_PLAYER
@@ -20,11 +22,11 @@ use crate::game::world::object::Objet;
 #[derive(Debug, Clone, PartialEq)]
 pub struct	Player
 {
-	id: String,
-	pos_x: i64,
-	pos_y: i64,
-	dead: bool,
+	pub id: String,
+	pos_x: i32,
+	pos_y: i32,
 	inventory: Inventory,
+	pub client_id: Option<i32>,
 }
 
 impl	Player
@@ -34,46 +36,58 @@ impl	Player
         Self
 		{
 			id: id,
-			pos_x: 15, // TODO
-			pos_y: 16, // TODO
-			dead: false,
+			pos_x: 1, // TODO
+			pos_y: 1, // TODO
 			inventory: Inventory::new(),
+			client_id: None,
         }
     }
 
-	pub fn	take_object(&mut self, obj: Objet, amount: u32) -> bool
+	pub fn	take_object(&mut self, map: &mut Vec<Vec<map::Cell>>, obj: Objet) -> bool
 	{
-		// TODO gérer le cas où il ne peut pas prendre l'objet
-		self.inventory.add(obj, amount);
-		return true;
+		if map::take_object(map, self.pos_x, self.pos_y, obj.clone())
+		{
+			// DEBUG
+			println!("{} {}", format!("[DEBUG] Client #{} a récupéré:", self.id).cyan().italic(), obj.name());
+
+			self.inventory.add(obj, 1);
+			return true;
+		}
+		return false;
 	}
 
-	pub fn	drop_object(&mut self, obj: Objet, amount: u32) -> bool
+	pub fn	drop_object(&mut self, map: &mut Vec<Vec<map::Cell>>, obj: Objet) -> bool
 	{
-		// TODO gérer le cas où il ne peut pas drop l'objet
-		// + Mettre au sol l'objet laché
-		return self.inventory.remove(obj, amount);
+		if map::drop_object(map, self.pos_x, self.pos_y, obj.clone())
+		{
+			// DEBUG
+			println!("{} {}", format!("[DEBUG] Client #{} a laché:", self.id).cyan().italic(), obj.name());
+
+			self.inventory.remove(obj, 1);
+			return true;
+		}
+		return false;
 	}
 
+	// TODO Ajouter du temps de vie
 	pub fn	eat(&mut self) -> bool
 	{
 		if self.inventory.get(Objet::Food) > 0
 		{
-			// TODO Ajouter du temps de vie
+			// DEBUG
+			println!("{}", format!("[DEBUG] Joueur: {} vient de manger !", self.id).cyan().italic());
+
 			self.inventory.remove(Objet::Food, 1);
-			println!("[DEBUG] Joueur: {} vient de manger !", self.id);
 			return true;
 		}
-		println!("[DEBUG] Joueur: {} n'a pas de nourriture !", self.id);
+		// DEBUG
+		println!("{}", format!("[DEBUG] Joueur: {} n'a pas de nourriture dans son inventaire !", self.id).cyan().italic());
 		return false;
 	}
 
 	// Retourne un tuple de coordonées (x, y)
-	pub fn	get_position(&self) -> (i64, i64)
+	pub fn	get_position(&self) -> (i32, i32)
 	{
 		return (self.pos_x, self.pos_y);
 	}
-
-	pub fn	get_id(&self) -> String { self.id.clone() }
-	pub fn	is_dead(&self) -> bool { self.dead }
 }

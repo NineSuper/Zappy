@@ -6,9 +6,11 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:11:11 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/13 16:29:11 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/15 13:22:45 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+use crate::game::entities::player::Player;
 
 use std::net::{IpAddr, SocketAddr, TcpStream};
 use colored::*;
@@ -21,6 +23,7 @@ pub struct Client
 	addr: SocketAddr,
 	commands: Vec<String>,
 	pub online: bool,
+	// pub player: //TODO avoir une référence vers un joueur,
 }
 
 impl	Client
@@ -35,10 +38,11 @@ impl	Client
 			addr: addr,
 			commands: vec![],
 			online: true,
+			// player: None,
 		}
 	}
 
-    pub fn add_command(&mut self, command: String)
+    pub fn	add_command(&mut self, command: String)
 	{
         if self.commands.len() < 10
 		{
@@ -47,7 +51,16 @@ impl	Client
 		}
     }
 
-    pub fn remove_command(&mut self)
+	pub fn	get_command(&self) -> Option<&String>
+	{
+		if let Some(msg) = self.commands.get(0)
+		{
+			return Some(msg);
+		}
+		return None;
+	}
+
+    pub fn	remove_command(&mut self)
 	{
         if !self.commands.is_empty()
 		{

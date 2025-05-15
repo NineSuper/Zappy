@@ -6,12 +6,12 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/13 16:50:32 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/14 15:08:19 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 use std::io::Read;
-use std::net::TcpListener;
+use std::net::{TcpListener, TcpStream};
 use std::process::exit;
 use std::collections::HashMap;
 use colored::*;
@@ -44,12 +44,14 @@ fn	setup_listener(addr: &String) -> TcpListener
 
 	match listener
 	{
-		Ok(listener) => {
+		Ok(listener) =>
+		{
 			listener.set_nonblocking(true).expect("Cannot set non-blocking");
 			println!("🌍 Serveur ouvert sur: {}\n", addr);
 			return listener;
 		}
-		Err(e) => {
+		Err(e) =>
+		{
 			eprintln!("❌ Erreur lors de l'écoute sur {}: {}", addr, e);
 			exit(-1);
 		}
@@ -61,6 +63,7 @@ fn	accept_new_client(server: &mut ServerState)
 	if let Ok((stream, addr)) = server.listener.accept()
 	{
 		let client = Client::new(stream, addr, server.next_id);
+
 		client.set_nonblocking();
 		server.clients.insert(server.next_id, client);
 		server.next_id += 1;
@@ -69,23 +72,24 @@ fn	accept_new_client(server: &mut ServerState)
 
 fn	disconnect_client(clients: &mut HashMap<i32, Client>, id: i32)
 {
-	if let Some(_client) = clients.get(&id) {
+	if let Some(_client) = clients.get(&id)
+	{
 		clients.remove(&id);
 	}
-	else {
+	else
+	{
 		print!("{}", "[ERROR] Client inconnu déconnecté !".red().bold())
 	}
 }
 
-//TODO
 fn	handle_client(clients: &mut HashMap<i32, Client>)
 {
 	let mut to_remove: Vec<i32> = vec![];
 
 	for (id, client) in clients.iter_mut()
 	{
-		let mut stream = client.get_stream();
-		let mut buf = [0; 1024];
+		let mut stream: &TcpStream = client.get_stream();
+		let mut buf = [0; 512];
 
 		match stream.read(&mut buf)
 		{
@@ -97,19 +101,22 @@ fn	handle_client(clients: &mut HashMap<i32, Client>)
 				client.add_command(msg.to_string());
 				client.remove_command(); // DEBUG
 			}
-			Err(_) => {
+			Err(_) =>
+			{
 				// to_remove.push(*id);
 			}
 		}
 	}
-	for id in to_remove {
+	for id in to_remove
+	{
 		disconnect_client(clients, id);
 	}
 }
 
 pub fn	server_loop(server: &mut ServerState)
 {
-	if server.clients.len() < server.connexion_max.try_into().unwrap() {
+	if server.clients.len() < server.connexion_max.try_into().unwrap()
+	{
 		accept_new_client(server);
 	}
 	handle_client(&mut server.clients);
