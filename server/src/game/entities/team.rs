@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:31:03 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/14 14:58:58 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/16 11:22:24 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,30 @@ impl	Team
 	pub fn	add_connect_nbr(&mut self)
 	{
 		self.connect_nbr += 1;
+	}
+
+	pub fn assign_player(&mut self, client_id: i32) -> Option<String>
+	{
+		for player in &mut self.players
+		{
+			if player.client_id.is_none()
+			{
+				player.client_id = Some(client_id);
+				return Some(player.id.clone());
+			}
+		}
+		return None;
+	}
+
+	pub fn unassign_player(&mut self, client_id: i32)
+	{
+		for player in &mut self.players
+		{
+			if player.client_id == Some(client_id)
+			{
+				player.client_id = None;
+			}
+		}
 	}
 
 	pub fn	get_level(&mut self) -> u16 { self.level }

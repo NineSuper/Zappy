@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 15:23:47 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/14 11:37:03 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/16 13:35:15 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ mod app;
 mod server;
 mod game;
 mod env;
-mod clients;
+mod client;
 mod utils;
 
 use app::AppState;

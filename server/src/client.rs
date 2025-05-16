@@ -1,19 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   clients.rs                                         :+:      :+:    :+:   */
+/*   client.rs                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:11:11 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/15 13:22:45 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/16 13:48:54 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-use crate::game::entities::player::Player;
-
 use std::net::{IpAddr, SocketAddr, TcpStream};
 use colored::*;
+use std::io::{Write, Read};
 
 #[derive(Debug)]
 pub struct Client
@@ -23,7 +22,7 @@ pub struct Client
 	addr: SocketAddr,
 	commands: Vec<String>,
 	pub online: bool,
-	// pub player: //TODO avoir une référence vers un joueur,
+	pub player_id: Option<String>,
 }
 
 impl	Client
@@ -38,7 +37,7 @@ impl	Client
 			addr: addr,
 			commands: vec![],
 			online: true,
-			// player: None,
+			player_id: None,
 		}
 	}
 
@@ -47,7 +46,8 @@ impl	Client
         if self.commands.len() < 10
 		{
         	self.commands.push(command.clone());
-			print!("{} {}", format!("[DEBUG] Client #{} a envoyé :", self.id).cyan().italic(), command);
+			println!("{} Client #{}: {}", "[RECV]".cyan().bold(), self.id, command.bold().cyan().italic());
+			// println!("{} {}", format!("[DEBUG] Client #{} a envoyé :", self.id).cyan().italic(), command);
 		}
     }
 
@@ -68,15 +68,47 @@ impl	Client
         }
     }
 
+	pub fn	send_message(&mut self, msg: String)
+	{
+		if let Err(e) = self.stream.write_all(msg.as_bytes())
+		{
+			println!("{} {}", format!("[ERROR] impossible d'envoyer un message au client {}:", self.id).red().bold(), e);
+		}
+		println!("{} Server -> Client #{}: {}", "[SEND]".blue().bold(), self.id, msg.trim_end().italic().cyan().bold());
+	}
+
 	pub fn	disconnect(&mut self)
 	{
 		println!("{} Client #{} (IP: {})", format!("[-]").red().bold(), self.id, self.addr);
 	}
 
+	pub fn	read_from_stream(&mut self) -> bool
+	{
+		let mut buf = [0; 512];
+		let mut stream = self.get_stream();
+
+		match stream.read(&mut buf)
+		{
+			Ok(0) => return false,
+			Ok(received) =>
+			{
+				let msg = String::from_utf8_lossy(&buf[..received]);
+				let clean_msg = msg.trim();
+				self.add_command(clean_msg.to_string());
+				return true;
+			}
+			Err(_) =>
+			{
+				// TODO Gérer en cas d'erreur
+				return true;
+			}
+		}
+	}
+
 	pub fn	set_nonblocking(&self)
 	{
-		// TODO gérer le cas où il y'a une erreur
-		self.stream.set_nonblocking(true).expect("Cannot set non-blocking");
+		// TODO à enlever interdit (sujet)
+		// self.stream.set_nonblocking(true).expect("Cannot set non-blocking");
 	}
 
 	pub	fn	get_stream(&self) -> &TcpStream { &self.stream }
