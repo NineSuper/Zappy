@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:33:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/14 14:58:21 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/16 14:28:11 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ use colored::*;
 	* Player._id: ID_TEAM + _ + ID_PLAYER
 */
 
+// TODO ajouter la vie
 #[derive(Debug, Clone, PartialEq)]
 pub struct	Player
 {
@@ -26,6 +27,8 @@ pub struct	Player
 	pos_x: i32,
 	pos_y: i32,
 	inventory: Inventory,
+	life_unit: i32,
+	level: u32,
 	pub client_id: Option<i32>,
 }
 
@@ -39,6 +42,8 @@ impl	Player
 			pos_x: 1, // TODO
 			pos_y: 1, // TODO
 			inventory: Inventory::new(),
+			life_unit: 10,
+			level: 1,
 			client_id: None,
         }
     }
@@ -63,13 +68,16 @@ impl	Player
 			// DEBUG
 			println!("{} {}", format!("[DEBUG] Client #{} a laché:", self.id).cyan().italic(), obj.name());
 
-			self.inventory.remove(obj, 1);
-			return true;
+			return self.inventory.remove(obj, 1);
 		}
 		return false;
 	}
 
-	// TODO Ajouter du temps de vie
+	/*
+		TODO Ajouter du temps de vie
+		One ’nourriture’ unit allows him to survive 126 time units,
+		therefore 126/t seconds.
+	*/
 	pub fn	eat(&mut self) -> bool
 	{
 		if self.inventory.get(Objet::Food) > 0
@@ -77,8 +85,7 @@ impl	Player
 			// DEBUG
 			println!("{}", format!("[DEBUG] Joueur: {} vient de manger !", self.id).cyan().italic());
 
-			self.inventory.remove(Objet::Food, 1);
-			return true;
+			return self.inventory.remove(Objet::Food, 1);
 		}
 		// DEBUG
 		println!("{}", format!("[DEBUG] Joueur: {} n'a pas de nourriture dans son inventaire !", self.id).cyan().italic());

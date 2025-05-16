@@ -6,17 +6,16 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/14 15:08:19 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/16 14:17:36 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-use std::io::Read;
-use std::net::{TcpListener, TcpStream};
+use std::net::TcpListener;
 use std::process::exit;
 use std::collections::HashMap;
 use colored::*;
 
-use crate::clients::Client;
+use crate::client::Client;
 
 #[derive(Debug, Clone)]
 pub struct	ServerSettings
@@ -52,7 +51,7 @@ fn	setup_listener(addr: &String) -> TcpListener
 		}
 		Err(e) =>
 		{
-			eprintln!("❌ Erreur lors de l'écoute sur {}: {}", addr, e);
+			println!("❌ Erreur lors de l'écoute sur {}: {}", addr, e);
 			exit(-1);
 		}
 	}
@@ -62,9 +61,9 @@ fn	accept_new_client(server: &mut ServerState)
 {
 	if let Ok((stream, addr)) = server.listener.accept()
 	{
-		let client = Client::new(stream, addr, server.next_id);
+		let mut client = Client::new(stream, addr, server.next_id);
 
-		client.set_nonblocking();
+		client.send_message("BIENVENUE\n".to_string());
 		server.clients.insert(server.next_id, client);
 		server.next_id += 1;
 	}
@@ -72,54 +71,96 @@ fn	accept_new_client(server: &mut ServerState)
 
 fn	disconnect_client(clients: &mut HashMap<i32, Client>, id: i32)
 {
-	if let Some(_client) = clients.get(&id)
-	{
-		clients.remove(&id);
-	}
-	else
-	{
-		print!("{}", "[ERROR] Client inconnu déconnecté !".red().bold())
-	}
+	clients.remove(&id);
 }
 
-fn	handle_client(clients: &mut HashMap<i32, Client>)
+pub fn	handle_client(client: &mut Client)
 {
-	let mut to_remove: Vec<i32> = vec![];
-
-	for (id, client) in clients.iter_mut()
+	if let Some(command) = client.get_command()
 	{
-		let mut stream: &TcpStream = client.get_stream();
-		let mut buf = [0; 512];
+		let mut	parts = command.trim().splitn(2, ' ');
+		let	action = parts.next().unwrap_or("");
+		let	args = parts.next();
 
-		match stream.read(&mut buf)
+		match action
 		{
-			Ok(0) => {to_remove.push(*id);}
-			Ok(received) =>
-			{
-				let msg = String::from_utf8_lossy(&buf[..received]);
-
-				client.add_command(msg.to_string());
-				client.remove_command(); // DEBUG
+			"avance" => {
+				client.send_message("ok\n".to_string());
 			}
-			Err(_) =>
-			{
-				// to_remove.push(*id);
+			"droite" => {
+				client.send_message("ok\n".to_string());
+			}
+			"gauche" => {
+				client.send_message("ok\n".to_string());
+			}
+			"voir" => {
+				client.send_message("{case1, case2, ...}\n".to_string());
+			}
+			"inventaire" => {
+				client.send_message("{phiras n, sibur n, ...}\n".to_string());
+			}
+			"prend" => {
+				if let Some(object) = args {
+					client.send_message("ok\n".to_string());
+				}
+				else {
+					client.send_message("ko\n".to_string());
+				}
+			}
+			"pose" => {
+				if let Some(object) = args
+				{
+					client.send_message("ok\n".to_string());
+				}
+				else {
+					client.send_message("ko\n".to_string());
+				}
+			}
+			"expulse" => {
+				client.send_message("ok\n".to_string());
+			}
+			"broadcast" => {
+				if let Some(message) = args {
+					client.send_message("ok\n".to_string());
+				} else {
+					client.send_message("ko\n".to_string());
+				}
+			}
+			"incantation" => {
+				client.send_message("elevation en cours\nniveau actuel: K\n".to_string());
+			}
+			"fork" => {
+				client.send_message("ok\n".to_string());
+			}
+			"connect_nbr" => {
+				client.send_message("0\n".to_string());
+			}
+			_ => {
+				client.send_message("Commande Inconnue\n".to_string());
 			}
 		}
-	}
-	for id in to_remove
-	{
-		disconnect_client(clients, id);
+		client.remove_command();
 	}
 }
 
 pub fn	server_loop(server: &mut ServerState)
 {
-	if server.clients.len() < server.connexion_max.try_into().unwrap()
-	{
+	let mut to_remove = vec![];
+
+	if server.clients.len() < server.connexion_max.try_into().unwrap() {
 		accept_new_client(server);
 	}
-	handle_client(&mut server.clients);
+	for (id, client) in server.clients.iter_mut()
+	{
+		if !client.read_from_stream() {
+			to_remove.push(*id);
+		}
+		handle_client(client);
+	}
+	for id in to_remove
+	{
+		disconnect_client(&mut server.clients, id);
+	}
 }
 
 pub fn	init_server(config: &ServerSettings) -> TcpListener
