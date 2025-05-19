@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:31:03 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/16 11:22:24 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/19 15:16:19 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ use super::player::Player;
 pub struct Team
 {
 	id: u32,
-	name: String,
+	pub name: String,
 	level: u16,
 	next_player_id: u32,
 	connect_nbr: u32,
@@ -35,10 +35,8 @@ impl	Team
 			level: 1,
 			players: Vec::new(),
 			next_player_id: 1,
-			connect_nbr: 1, // TODO
+			connect_nbr: 0,
 		};
-
-		team.add_player(); // On commence avec un jour dans la team
 		return team;
 	}
 
@@ -75,7 +73,10 @@ impl	Team
 		{
 			if player.client_id.is_none()
 			{
+				self.connect_nbr += 1;
 				player.client_id = Some(client_id);
+
+				println!("{} Client #{} a rejoint: {}({})", "[TEAM]".magenta().bold(), client_id, self.name, self.id);
 				return Some(player.id.clone());
 			}
 		}
@@ -84,10 +85,12 @@ impl	Team
 
 	pub fn unassign_player(&mut self, client_id: i32)
 	{
-		for player in &mut self.players
+		for player in &mut self.players.iter_mut()
 		{
 			if player.client_id == Some(client_id)
 			{
+				println!("{} Client #{} a quitté: {}({})", "[TEAM]".red().bold(), client_id, self.name, self.id);
+				self.connect_nbr -= 1;
 				player.client_id = None;
 			}
 		}
@@ -97,6 +100,30 @@ impl	Team
 	pub fn	get_players(&self) -> &Vec<Player> { &self.players }
 	pub fn	get_players_mut(&mut self) -> &mut Vec<Player> { &mut self.players }
 	pub fn	get_connect_nbr(&self) -> u32 { self.connect_nbr }
+}
+
+pub fn	add_client_team(name: String, teams: &mut Vec<Team>, client_id: i32) -> Option<String>
+{
+	for team in teams.iter_mut()
+	{
+		if team.name == name
+		{
+			team.add_player();
+			return team.assign_player(client_id);
+		}
+	}
+	return None;
+}
+
+pub fn	remove_client_team(team_id: u32, teams: &mut Vec<Team>, client_id: i32)
+{
+	for team in teams.iter_mut()
+	{
+		if team.id == team_id
+		{
+			team.unassign_player(client_id);
+		}
+	}
 }
 
 pub fn	create_team(teams: Vec<String>) -> Vec<Team>

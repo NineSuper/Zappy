@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:11:11 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/16 13:48:54 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/19 15:23:59 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ pub struct Client
 	commands: Vec<String>,
 	pub online: bool,
 	pub player_id: Option<String>,
+	pub team_id: u32,
 }
 
 impl	Client
@@ -38,6 +39,7 @@ impl	Client
 			commands: vec![],
 			online: true,
 			player_id: None,
+			team_id: 0,
 		}
 	}
 
@@ -47,7 +49,6 @@ impl	Client
 		{
         	self.commands.push(command.clone());
 			println!("{} Client #{}: {}", "[RECV]".cyan().bold(), self.id, command.bold().cyan().italic());
-			// println!("{} {}", format!("[DEBUG] Client #{} a envoyé :", self.id).cyan().italic(), command);
 		}
     }
 
@@ -94,6 +95,7 @@ impl	Client
 			{
 				let msg = String::from_utf8_lossy(&buf[..received]);
 				let clean_msg = msg.trim();
+
 				self.add_command(clean_msg.to_string());
 				return true;
 			}

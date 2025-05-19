@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/16 14:17:36 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/19 15:23:47 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ use std::collections::HashMap;
 use colored::*;
 
 use crate::client::Client;
+use crate::game::core::state::GameState;
+use crate::game::entities::team::add_client_team;
 
 #[derive(Debug, Clone)]
 pub struct	ServerSettings
@@ -24,7 +26,7 @@ pub struct	ServerSettings
 	pub width: u32,
 	pub height: u32,
 	pub connexion_max: u32,
-	pub time_unit: u32,
+	pub time_unit: f64,
 	pub teams_name: Vec<String>,
 }
 
@@ -100,7 +102,8 @@ pub fn	handle_client(client: &mut Client)
 				client.send_message("{phiras n, sibur n, ...}\n".to_string());
 			}
 			"prend" => {
-				if let Some(object) = args {
+				if let Some(object) = args
+				{
 					client.send_message("ok\n".to_string());
 				}
 				else {
@@ -155,7 +158,7 @@ pub fn	server_loop(server: &mut ServerState)
 		if !client.read_from_stream() {
 			to_remove.push(*id);
 		}
-		handle_client(client);
+		// handle_client(client);
 	}
 	for id in to_remove
 	{
