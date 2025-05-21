@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:11:11 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/19 15:23:59 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/21 16:19:31 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,15 +15,21 @@ use colored::*;
 use std::io::{Write, Read};
 
 #[derive(Debug)]
+pub struct PendingCommand {
+	command: String,
+	ticks_remaining: u32,
+}
+
+#[derive(Debug)]
 pub struct Client
 {
 	pub id: i32,
 	stream: TcpStream,
 	addr: SocketAddr,
 	commands: Vec<String>,
-	pub online: bool,
 	pub player_id: Option<String>,
 	pub team_id: u32,
+	pending_commands: Vec<PendingCommand>,
 }
 
 impl	Client
@@ -37,18 +43,35 @@ impl	Client
 			stream: stream,
 			addr: addr,
 			commands: vec![],
-			online: true,
 			player_id: None,
 			team_id: 0,
+			pending_commands: Vec::new(),
 		}
 	}
 
     pub fn	add_command(&mut self, command: String)
 	{
-        if self.commands.len() < 10
+		let ticks = match command.trim()
 		{
-        	self.commands.push(command.clone());
+			"avance" | "droite" | "gauche" => 7,
+			"voir" => 7,
+			"inventaire" => 1,
+			"prend" | "pose" => 7,
+			"expulse" => 7,
+			"broadcast" => 7,
+			"incantation" => 300,
+			"fork" => 42,
+			"connect_nbr" => 0,
+			_ => 0,
+		};
+
+		if self.pending_commands.len() < 10
+		{
 			println!("{} Client #{}: {}", "[RECV]".cyan().bold(), self.id, command.bold().cyan().italic());
+			self.pending_commands.push(PendingCommand {
+				command,
+				ticks_remaining: ticks,
+			});
 		}
     }
 
@@ -56,6 +79,7 @@ impl	Client
 	{
 		if let Some(msg) = self.commands.get(0)
 		{
+			println!("{}", msg);
 			return Some(msg);
 		}
 		return None;
@@ -107,10 +131,23 @@ impl	Client
 		}
 	}
 
-	pub fn	set_nonblocking(&self)
+	pub fn update_commands(&mut self) -> Option<String>
 	{
-		// TODO à enlever interdit (sujet)
-		// self.stream.set_nonblocking(true).expect("Cannot set non-blocking");
+		if let Some(cmd) = self.pending_commands.first_mut()
+		{
+			if cmd.ticks_remaining > 0
+			{
+				cmd.ticks_remaining -= 1;
+				return None
+			}
+			else
+			{
+				let command = cmd.command.clone();
+				self.pending_commands.remove(0);
+				return Some(command);
+			}
+		}
+		return None;
 	}
 
 	pub	fn	get_stream(&self) -> &TcpStream { &self.stream }
@@ -123,7 +160,6 @@ impl	Drop for Client
 {
 	fn	drop(&mut self)
 	{
-		self.online = false;
 		self.disconnect();
 	}
 }

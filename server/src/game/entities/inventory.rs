@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:41:42 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/13 10:46:00 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/21 15:14:27 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,20 @@ impl	Inventory
 	{
 		return *self.objects.get(&obj).unwrap_or(&0);
 	}
+
+	pub fn get_all_objects(&self) -> Vec<(Objet, u32)>
+	{
+        let mut result = Vec::new();
+
+        result.push((Objet::Food, self.get(Objet::Food)));
+        result.push((Objet::Linemate, self.get(Objet::Linemate)));
+        result.push((Objet::Deraumere, self.get(Objet::Deraumere)));
+        result.push((Objet::Sibur, self.get(Objet::Sibur)));
+        result.push((Objet::Mendiane, self.get(Objet::Mendiane)));
+        result.push((Objet::Phiras, self.get(Objet::Phiras)));
+        result.push((Objet::Thystame, self.get(Objet::Thystame)));
+        return result;
+    }
 }
 
 

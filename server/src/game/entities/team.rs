@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:31:03 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/19 15:16:19 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/21 16:16:01 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ use super::player::Player;
 #[derive(Debug, Clone)]
 pub struct Team
 {
-	id: u32,
+	pub id: u32,
 	pub name: String,
 	level: u16,
 	next_player_id: u32,
@@ -35,7 +35,7 @@ impl	Team
 			level: 1,
 			players: Vec::new(),
 			next_player_id: 1,
-			connect_nbr: 0,
+			connect_nbr: 1,
 		};
 		return team;
 	}
@@ -104,15 +104,27 @@ impl	Team
 
 pub fn	add_client_team(name: String, teams: &mut Vec<Team>, client_id: i32) -> Option<String>
 {
-	for team in teams.iter_mut()
-	{
-		if team.name == name
-		{
-			team.add_player();
-			return team.assign_player(client_id);
-		}
-	}
-	return None;
+    for team in teams.iter_mut()
+    {
+        if team.name == name
+        {
+            if team.connect_nbr > 0
+            {
+                let player_id = format!("{}_{}", team.id, team.next_player_id);
+                let mut player = Player::new(player_id.clone());
+                player.client_id = Some(client_id);
+
+                team.next_player_id += 1;
+                team.players.push(player);
+                team.connect_nbr -= 1;
+
+                println!("{} Nouveau joueur {} a rejoint l'équipe {}", "[BIRTH]".green().bold(), player_id, name);
+                return Some(player_id);
+            }
+            return None;
+        }
+    }
+    return None;
 }
 
 pub fn	remove_client_team(team_id: u32, teams: &mut Vec<Team>, client_id: i32)
