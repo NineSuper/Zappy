@@ -6,10 +6,11 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:33:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/21 15:57:06 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/22 10:48:36 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+use crate::game::entities::team::Team;
 use crate::game::core::state::GameState;
 use super::inventory::Inventory;
 use crate::game::world::{map, object::Objet};
@@ -47,7 +48,7 @@ impl	Player
 {
     pub fn	new(id: String) -> Self
 	{
-        Self
+    	let mut player = Self
 		{
 			id: id,
 			pos_x: 1, // TODO
@@ -58,7 +59,9 @@ impl	Player
 			direction: Direction::North,
 			health_points: 100,
 			client_id: None,
-        }
+        };
+		player.inventory.add(Objet::Food, 10);
+		return player;
     }
 
 	pub fn	take_object(&mut self, map: &mut Vec<Vec<map::Cell>>, obj: Objet) -> bool
@@ -111,14 +114,17 @@ impl	Player
 		return (self.pos_x, self.pos_y);
 	}
 
-	pub fn move_forward(&mut self)
+	pub fn move_forward(&mut self, map: &Vec<Vec<map::Cell>>)
 	{
+		let map_width = map[0].len() as i32;
+		let map_height = map.len() as i32;
+
 		match self.direction
 		{
-			Direction::North => self.pos_y -= 1,
-			Direction::South => self.pos_y += 1,
-			Direction::East => self.pos_x += 1,
-			Direction::West => self.pos_x -= 1,
+			Direction::North => self.pos_y = (self.pos_y - 1 + map_height) % map_height,
+			Direction::South => self.pos_y = (self.pos_y + 1) % map_height,
+			Direction::East  => self.pos_x = (self.pos_x + 1) % map_width,
+			Direction::West  => self.pos_x = (self.pos_x - 1 + map_width) % map_width,
 		}
 	}
 
@@ -154,6 +160,81 @@ impl	Player
 		self.health_points
 	}
 
+    pub fn get_vision_range(&self) -> i32
+	{
+        self.level as i32
+    }
+
+	pub fn get_vision(&self, game_state: &GameState) -> String
+	{
+		let mut vision = String::from("{");
+		let range = self.get_vision_range();
+		let (x, y) = self.get_position();
+		let map_height = game_state.map.len() as i32;
+		let map_width = game_state.map[0].len() as i32;
+
+		for i in 0..=range
+		{
+			let side_cases = i;
+
+			for j in -side_cases..=side_cases
+			{
+				let mut view_x = x + j;
+				let mut view_y = y - i;
+
+				if view_x < 0 {
+					view_x += map_width;
+				}
+				else if view_x >= map_width {
+					view_x -= map_width;
+				}
+				if view_y < 0 {
+					view_y += map_height;
+				}
+				else if view_y >= map_height {
+					view_y -= map_height;
+				}
+
+				let cell = &game_state.map[view_y as usize][view_x as usize];
+				let mut cell_content = String::new();
+
+				for (obj, count) in &cell.content
+				{
+					for _ in 0..*count {
+						if !cell_content.is_empty()
+						{
+							cell_content.push(' ');
+						}
+						cell_content.push_str(&obj.name().to_lowercase());
+					}
+				}
+
+				for team in &game_state.teams
+				{
+					for player in &team.players
+					{
+						let (player_x, player_y) = player.get_position();
+						if player_x == view_x && player_y == view_y
+						{
+							if !cell_content.is_empty() {
+								cell_content.push(' ');
+							}
+							cell_content.push_str("player");
+						}
+					}
+				}
+
+				if !vision.ends_with('{') {
+					vision.push_str(", ");
+				}
+				vision.push_str(&cell_content);
+			}
+		}
+		vision.push('}');
+		vision.push('\n');
+		return vision;
+	}
+
 	pub fn get_inventory(&self) -> String
 	{
         let mut response = String::from("{");
@@ -177,7 +258,8 @@ pub fn	get_player_by_client_id(game_state: &mut GameState, client_id: i32) -> Op
 	{
         for player in &mut team.players
 		{
-            if player.client_id == Some(client_id) {
+            if player.client_id == Some(client_id)
+			{
                 return Some(player);
             }
         }

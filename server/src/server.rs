@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/21 16:18:41 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/22 10:42:21 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,10 @@ use colored::*;
 
 use crate::client::Client;
 use crate::game::core::state::GameState;
+use crate::game::entities::player;
 use crate::game::entities::team::add_client_team;
 use crate::game::entities::player::get_player_by_client_id;
+use crate::game::entities::player::Player;
 
 #[derive(Debug, Clone)]
 pub struct	ServerSettings
@@ -104,7 +106,7 @@ fn	handle_first_command(client: &mut Client, game_state: &mut GameState) -> bool
     };
 
     let team_name = command.trim();
-    println!("{} Tentative de connexion à l'équipe: {}", "[DEBUG]".yellow().bold(), team_name);
+    // println!("{} Tentative de connexion à l'équipe: {}", "[DEBUG]".yellow().bold(), team_name);
 
     let team_exists = game_state.teams.iter().any(|team| team.name == team_name);
     if !team_exists
@@ -142,6 +144,7 @@ fn	handle_first_command(client: &mut Client, game_state: &mut GameState) -> bool
     return true;
 }
 
+
 pub fn	handle_client(client: &mut Client, game_state: &mut GameState)
 {
 	if client.team_id == 0 {
@@ -152,94 +155,90 @@ pub fn	handle_client(client: &mut Client, game_state: &mut GameState)
     if let Some(command) = client.update_commands()
 	{
         let mut parts = command.trim().splitn(2, ' ');
-        let action = parts.next().unwrap_or("");
-        let args = parts.next();
-        let player = get_player_by_client_id(game_state, client.id);
+        let action: &str = parts.next().unwrap_or("");
+        let args: Option<&str> = parts.next();
+        let map = game_state.map.clone();
 
-        if player.is_none()
-		{
-            client.send_message("Pas de joueur associé à ce client\n".to_string());
-            return;
+        if let Some(player) = get_player_by_client_id(game_state, client.id)
+        {
+            match action
+            {
+                "avance" => {
+                    player.move_forward(&map);
+                    client.send_message("ok\n".to_string());
+                }
+                "droite" => {
+                    player.turn_right();
+                    client.send_message("ok\n".to_string());
+                }
+                "gauche" => {
+                    player.turn_left();
+                    client.send_message("ok\n".to_string());
+                }
+                "voir" =>
+                {
+                    // TODO simplier le code ci-dessous
+                    let map_clone = game_state.map.clone();
+                    let teams_clone = game_state.teams.clone();
+
+                    if let Some(player) = get_player_by_client_id(game_state, client.id)
+                    {
+                        let vision = player.get_vision(&GameState{map: map_clone, teams: teams_clone});
+                        client.send_message(vision);
+                    }
+                }
+                "inventaire" => {
+                    client.send_message(player.get_inventory());
+                }
+                "prend" => {
+                    if let Some(object) = args
+                    {
+                        client.send_message("ok\n".to_string());
+                    }
+                    else
+                    {
+                        client.send_message("ko\n".to_string());
+                    }
+                }
+                "pose" => {
+                    if let Some(object) = args
+                    {
+                        client.send_message("ok\n".to_string());
+                    }
+                    else
+                    {
+                        client.send_message("ko\n".to_string());
+                    }
+                }
+                "expulse" => {
+                    client.send_message("ok\n".to_string());
+                }
+                "broadcast" => {
+                    if let Some(message) = args
+                    {
+                        client.send_message("ok\n".to_string());
+                    }
+                    else
+                    {
+                        client.send_message("ko\n".to_string());
+                    }
+                }
+                "incantation" => {
+                    client.send_message("elevation en cours\nniveau actuel: K\n".to_string());
+                }
+                "fork" => {
+                    client.send_message("ok\n".to_string());
+                }
+                "connect_nbr" => {
+                    client.send_message("0\n".to_string());
+                }
+                _ => {
+                    client.send_message("Commande Inconnue\n".to_string());
+                }
+            }
         }
-        let player = player.unwrap();
-        match action
-		{
-            "avance" =>
-			{
-                player.move_forward();
-                client.send_message("ok\n".to_string());
-            }
-            "droite" =>
-			{
-                player.turn_right();
-                client.send_message("ok\n".to_string());
-            }
-            "gauche" =>
-			{
-                player.turn_left();
-                client.send_message("ok\n".to_string());
-            }
-            "voir" =>
-			{
-                client.send_message("{case1, case2, ...}\n".to_string());
-            }
-            "inventaire" =>
-			{
-                client.send_message(player.get_inventory());
-            }
-            "prend" =>
-			{
-                if let Some(object) = args
-				{
-                    client.send_message("ok\n".to_string());
-                }
-                else
-				{
-                    client.send_message("ko\n".to_string());
-                }
-            }
-            "pose" =>
-			{
-                if let Some(object) = args
-				{
-                    client.send_message("ok\n".to_string());
-                }
-                else
-				{
-                    client.send_message("ko\n".to_string());
-                }
-            }
-            "expulse" =>
-			{
-                client.send_message("ok\n".to_string());
-            }
-            "broadcast" =>
-			{
-                if let Some(message) = args
-				{
-                    client.send_message("ok\n".to_string());
-                }
-                else
-				{
-                    client.send_message("ko\n".to_string());
-                }
-            }
-            "incantation" =>
-			{
-                client.send_message("elevation en cours\nniveau actuel: K\n".to_string());
-            }
-            "fork" =>
-			{
-                client.send_message("ok\n".to_string());
-            }
-            "connect_nbr" =>
-			{
-                client.send_message("0\n".to_string());
-            }
-            _ =>
-			{
-                client.send_message("Commande Inconnue\n".to_string());
-            }
+        else {
+            client.send_message("Vous n'avez pas de joueur associé !\n".to_string());
         }
     }
 }
