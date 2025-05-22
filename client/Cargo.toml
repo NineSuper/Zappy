@@ -1,0 +1,7 @@
+[package]
+name = "client"
+edition = "2021"
+version = "0.0.1"
+
+[dependencies]
+colored = "3.0.0"

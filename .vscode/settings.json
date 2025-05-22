@@ -1,0 +1,12 @@
+{
+	"rust-analyzer.cargo.autoreload": false,
+	"rust-analyzer.cargo.buildScripts.enable": false,
+	"rust-analyzer.checkOnSave": false,
+	// "rust-analyzer.procMacro.enable": false,
+	"rust-analyzer.cargo.buildScripts.rebuildOnSave": false,
+	"rust-analyzer.diagnostics.enable": false,
+	"rust-analyzer.linkedProjects": [
+	  "server/Cargo.toml",
+	  "client/Cargo.toml"
+	]
+}
