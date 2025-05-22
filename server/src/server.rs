@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/22 10:42:21 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/22 11:09:29 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,8 @@ use colored::*;
 
 use crate::client::Client;
 use crate::game::core::state::GameState;
-use crate::game::entities::player;
 use crate::game::entities::team::add_client_team;
 use crate::game::entities::player::get_player_by_client_id;
-use crate::game::entities::player::Player;
 
 #[derive(Debug, Clone)]
 pub struct	ServerSettings
@@ -158,6 +156,7 @@ pub fn	handle_client(client: &mut Client, game_state: &mut GameState)
         let action: &str = parts.next().unwrap_or("");
         let args: Option<&str> = parts.next();
         let map = game_state.map.clone();
+        let teams = game_state.teams.clone();
 
         if let Some(player) = get_player_by_client_id(game_state, client.id)
         {
@@ -175,17 +174,8 @@ pub fn	handle_client(client: &mut Client, game_state: &mut GameState)
                     player.turn_left();
                     client.send_message("ok\n".to_string());
                 }
-                "voir" =>
-                {
-                    // TODO simplier le code ci-dessous
-                    let map_clone = game_state.map.clone();
-                    let teams_clone = game_state.teams.clone();
-
-                    if let Some(player) = get_player_by_client_id(game_state, client.id)
-                    {
-                        let vision = player.get_vision(&GameState{map: map_clone, teams: teams_clone});
-                        client.send_message(vision);
-                    }
+                "voir" => {
+                    client.send_message(player.get_vision(&GameState{map: map, teams: teams}));
                 }
                 "inventaire" => {
                     client.send_message(player.get_inventory());
