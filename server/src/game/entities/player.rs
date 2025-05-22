@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:33:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/22 14:08:06 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/22 14:45:27 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ impl	Player
 			pos_y: 1, // TODO
 			inventory: Inventory::new(),
 			life_unit: 10,
-			level: 3,
+			level: 1,
 			direction: Direction::North,
 			health_points: 100,
 			client_id: None,
