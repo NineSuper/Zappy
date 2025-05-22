@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 15:06:42 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/13 15:52:51 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/19 12:01:20 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,28 @@ fn	get_var(args: &[String], flag: char) -> u32
 	exit(-1);
 }
 
+fn	get_var_time(args: &[String], flag: char) -> f64
+{
+	for i in 0..args.len()
+	{
+		if args[i] == format!("-{}", flag)
+		{
+			if let Some(var_str) = args.get(i + 1)
+			{
+				if !var_str.starts_with('-')
+				{
+					if let Ok(vars) = var_str.parse::<f64>()
+					{
+						return vars;
+					}
+				}
+			}
+		}
+	}
+	println!("Erreur: argument -{} non trouvé ou invalide", flag);
+	exit(-1);
+}
+
 fn	get_teams(args: &[String]) -> Vec<String>
 {
 	for i in 0..args.len()
@@ -112,7 +134,7 @@ pub	fn	init_env() -> ServerSettings
 		height: get_var(&args, 'x'),
 		width: get_var(&args, 'y'),
 		connexion_max: get_var(&args, 'c'),
-		time_unit: get_var(&args, 't'),
+		time_unit: get_var_time(&args, 't'),
 		teams_name: get_teams(&args)
 	};
 	print_env(config.clone());

@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 15:23:47 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/16 13:35:15 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/19 10:16:29 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,10 @@
 	*     - Placer aléatoirement des ressources sur chaque case (avec règles)
 	*     - Initialiser les équipes (nom, slots, œufs)
 	*
-	* [ ] Gérer les connexions clients :
-	*     - Accepter les sockets clients (IA ou graphique)
+	* [x] Gérer les connexions clients :
 	*     - Associer chaque client à une structure `Client`
 	*     - Lire/écrire dans les sockets
+	*     - Accepter les sockets clients (IA ou graphique)
 	*
 	* [ ] Implémenter le système de joueurs :
 	*     - Chaque client est lié à un joueur (position, orientation, inventaire, etc.)
