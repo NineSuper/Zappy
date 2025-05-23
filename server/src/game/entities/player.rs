@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:33:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/22 14:45:27 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/23 12:39:08 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,11 @@ pub enum Direction
 pub struct Player
 {
 	pub id: String,
-	pos_x: i32,
-	pos_y: i32,
+	pub pos_x: i32,
+	pub pos_y: i32,
 	pub inventory: Inventory,
 	life_unit: i32,
-	level: u32,
+	pub level: u32,
 	direction: Direction,
 	health_points: i32,
 	pub client_id: Option<i32>,
@@ -59,7 +59,7 @@ impl	Player
 			health_points: 100,
 			client_id: None,
         };
-		player.inventory.add(Objet::Food, 10);
+		player.inventory.add(Objet::food, 10);
 		return player;
     }
 
@@ -95,12 +95,12 @@ impl	Player
 	*/
 	pub fn	eat(&mut self) -> bool
 	{
-		if self.inventory.get(Objet::Food) > 0
+		if self.inventory.get(Objet::food) > 0
 		{
 			// DEBUG
 			println!("{}", format!("[DEBUG] Joueur: {} vient de manger !", self.id).cyan().italic());
 
-			return self.inventory.remove(Objet::Food, 1);
+			return self.inventory.remove(Objet::food, 1);
 		}
 		// DEBUG
 		println!("{}", format!("[DEBUG] Joueur: {} n'a pas de nourriture dans son inventaire !", self.id).cyan().italic());
@@ -252,19 +252,4 @@ impl	Player
         response.push_str("}\n");
         response
     }
-}
-
-pub fn	get_player_by_client_id(game_state: &mut GameState, client_id: i32) -> Option<&mut Player>
-{
-    for team in &mut game_state.teams
-	{
-        for player in &mut team.players
-		{
-            if player.client_id == Some(client_id)
-			{
-                return Some(player);
-            }
-        }
-    }
-    None
 }

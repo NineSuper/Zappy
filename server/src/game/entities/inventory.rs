@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:41:42 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/21 15:14:27 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/23 12:39:33 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,13 +61,13 @@ impl	Inventory
 	{
         let mut result = Vec::new();
 
-        result.push((Objet::Food, self.get(Objet::Food)));
-        result.push((Objet::Linemate, self.get(Objet::Linemate)));
-        result.push((Objet::Deraumere, self.get(Objet::Deraumere)));
-        result.push((Objet::Sibur, self.get(Objet::Sibur)));
-        result.push((Objet::Mendiane, self.get(Objet::Mendiane)));
-        result.push((Objet::Phiras, self.get(Objet::Phiras)));
-        result.push((Objet::Thystame, self.get(Objet::Thystame)));
+        result.push((Objet::food, self.get(Objet::food)));
+        result.push((Objet::linemate, self.get(Objet::linemate)));
+        result.push((Objet::deraumere, self.get(Objet::deraumere)));
+        result.push((Objet::sibur, self.get(Objet::sibur)));
+        result.push((Objet::mendiane, self.get(Objet::mendiane)));
+        result.push((Objet::phiras, self.get(Objet::phiras)));
+        result.push((Objet::thystame, self.get(Objet::thystame)));
         return result;
     }
 }

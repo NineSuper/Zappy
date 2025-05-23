@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 15:23:47 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/19 10:16:29 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/23 14:35:51 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,18 +47,17 @@
 	*     - Gérer le temps de vie (nourriture consommée avec le temps)
 	*     - Gérer le fork / naissance / mort
 	*
-	* [ ] Implémenter le moteur de commandes :
+	* [x] Implémenter le moteur de commandes :
 	*     - Lecture de la file de commandes du client
 	*     - Exécution dans l’ordre avec le bon délai
 	*     - Réponses envoyées via socket
 	*     - Commandes à gérer : avance, voir, inventaire, prend, pose, incantation, etc.
 	*
-	* [ ] Implémenter le protocole réseau :
+	* [x] Implémenter le protocole réseau :
 	*     - Format des messages (`BIENVENUE\n`, `message <k>,<txt>`, etc.)
-	*     - Envoi des données au client graphique
 	*     - Gestion du buffer (max 10 commandes par client en attente)
 	*
-	* [ ] Gérer le temps :
+	* [x] Gérer le temps :
 	*     - Boucle serveur basée sur un "tick" système
 	*     - Exécution différée des commandes selon leur coût (ex : avance = 7/t)
 	*     - Pas de `sleep()` bloquant → système non-bloquant

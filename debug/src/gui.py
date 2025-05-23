@@ -8,6 +8,7 @@ import queue
 import time
 from dataclasses import dataclass
 from enum import Enum
+import math
 
 class Direction(Enum):
     NORTH = 0
@@ -149,50 +150,38 @@ class ZappyGUI:
         x, y = self.player_pos
         tiles = []
 
-        # Niveau 0 (position du joueur)
-        tiles.append(self.wrap_coordinates(x, y))
-
-        # Niveau 1
+        # Niveau 0 (tile directement devant)
         if self.player_direction == Direction.NORTH:
-            tiles.extend([self.wrap_coordinates(x-1, y-1), self.wrap_coordinates(x-1, y), self.wrap_coordinates(x-1, y+1)])
+            tiles.append(self.wrap_coordinates(x-1, y))
         elif self.player_direction == Direction.EAST:
-            tiles.extend([self.wrap_coordinates(x-1, y+1), self.wrap_coordinates(x, y+1), self.wrap_coordinates(x+1, y+1)])
+            tiles.append(self.wrap_coordinates(x, y+1))
         elif self.player_direction == Direction.SOUTH:
-            tiles.extend([self.wrap_coordinates(x+1, y-1), self.wrap_coordinates(x+1, y), self.wrap_coordinates(x+1, y+1)])
+            tiles.append(self.wrap_coordinates(x+1, y))
         else:  # WEST
-            tiles.extend([self.wrap_coordinates(x-1, y-1), self.wrap_coordinates(x, y-1), self.wrap_coordinates(x+1, y-1)])
+            tiles.append(self.wrap_coordinates(x, y-1))
 
-        # Niveau 2
-        if self.player_direction == Direction.NORTH:
-            tiles.extend([self.wrap_coordinates(x-2, y-2), self.wrap_coordinates(x-2, y-1), self.wrap_coordinates(x-2, y),
-                         self.wrap_coordinates(x-2, y+1), self.wrap_coordinates(x-2, y+2)])
-        elif self.player_direction == Direction.EAST:
-            tiles.extend([self.wrap_coordinates(x-2, y+2), self.wrap_coordinates(x-1, y+2), self.wrap_coordinates(x, y+2),
-                         self.wrap_coordinates(x+1, y+2), self.wrap_coordinates(x+2, y+2)])
-        elif self.player_direction == Direction.SOUTH:
-            tiles.extend([self.wrap_coordinates(x+2, y-2), self.wrap_coordinates(x+2, y-1), self.wrap_coordinates(x+2, y),
-                         self.wrap_coordinates(x+2, y+1), self.wrap_coordinates(x+2, y+2)])
-        else:  # WEST
-            tiles.extend([self.wrap_coordinates(x-2, y-2), self.wrap_coordinates(x-1, y-2), self.wrap_coordinates(x, y-2),
-                         self.wrap_coordinates(x+1, y-2), self.wrap_coordinates(x+2, y-2)])
+        # Calculer le niveau en fonction du nombre de cases visibles
+        # Pour n cases, le niveau est la racine carrée de (n-1)/2
+        # Par exemple:
+        # - Niveau 1: 4 cases (0-3) -> (4-1)/2 = 1.5 -> niveau 1
+        # - Niveau 3: 16 cases (0-15) -> (16-1)/2 = 7.5 -> niveau 3
+        # - Niveau 8: 81 cases (0-80) -> (81-1)/2 = 40 -> niveau 8
+        level = int(((len(self.visible_items) - 1) / 2) ** 0.5)
 
-        # Niveau 3
-        if self.player_direction == Direction.NORTH:
-            tiles.extend([self.wrap_coordinates(x-3, y-3), self.wrap_coordinates(x-3, y-2), self.wrap_coordinates(x-3, y-1),
-                         self.wrap_coordinates(x-3, y), self.wrap_coordinates(x-3, y+1), self.wrap_coordinates(x-3, y+2),
-                         self.wrap_coordinates(x-3, y+3)])
-        elif self.player_direction == Direction.EAST:
-            tiles.extend([self.wrap_coordinates(x-3, y+3), self.wrap_coordinates(x-2, y+3), self.wrap_coordinates(x-1, y+3),
-                         self.wrap_coordinates(x, y+3), self.wrap_coordinates(x+1, y+3), self.wrap_coordinates(x+2, y+3),
-                         self.wrap_coordinates(x+3, y+3)])
-        elif self.player_direction == Direction.SOUTH:
-            tiles.extend([self.wrap_coordinates(x+3, y-3), self.wrap_coordinates(x+3, y-2), self.wrap_coordinates(x+3, y-1),
-                         self.wrap_coordinates(x+3, y), self.wrap_coordinates(x+3, y+1), self.wrap_coordinates(x+3, y+2),
-                         self.wrap_coordinates(x+3, y+3)])
-        else:  # WEST
-            tiles.extend([self.wrap_coordinates(x-3, y-3), self.wrap_coordinates(x-2, y-3), self.wrap_coordinates(x-1, y-3),
-                         self.wrap_coordinates(x, y-3), self.wrap_coordinates(x+1, y-3), self.wrap_coordinates(x+2, y-3),
-                         self.wrap_coordinates(x+3, y-3)])
+        # Niveaux 1 à level
+        for n in range(1, level + 1):
+            if self.player_direction == Direction.NORTH:
+                for i in range(-n, n+1):
+                    tiles.append(self.wrap_coordinates(x-(n+1), y+i))
+            elif self.player_direction == Direction.EAST:
+                for i in range(-n, n+1):
+                    tiles.append(self.wrap_coordinates(x+i, y+(n+1)))
+            elif self.player_direction == Direction.SOUTH:
+                for i in range(-n, n+1):
+                    tiles.append(self.wrap_coordinates(x+(n+1), y+i))
+            else:  # WEST
+                for i in range(-n, n+1):
+                    tiles.append(self.wrap_coordinates(x+i, y-(n+1)))
 
         return tiles
 
@@ -208,35 +197,49 @@ class ZappyGUI:
         x2 = x1 + self.cell_size
         y2 = y1 + self.cell_size
 
-        # Mettre à jour la visibilité
+        # Mettre à jour la visibilité seulement si nécessaire
         if tile.is_visible != is_visible:
             tile.is_visible = is_visible
             fill_color = '#F0F0F0' if is_visible else '#D3D3D3'
             self.map_canvas.itemconfig(tile.canvas_id, fill=fill_color)
 
-        # Supprimer les anciens items
-        for item_id in tile.item_ids:
-            self.map_canvas.delete(item_id)
-        tile.item_ids.clear()
+        # Mettre à jour les items seulement si nécessaire
+        if tile.items != items:
+            # Supprimer les anciens items
+            for item_id in tile.item_ids:
+                self.map_canvas.delete(item_id)
+            tile.item_ids.clear()
 
-        # Ajouter les nouveaux items
-        if items:
-            for k, item in enumerate(items):
-                try:
-                    item_type = ItemType(item)
-                    color = self.item_colors[item_type]
-                    item_x = x1 + (k + 1) * (self.cell_size / (len(items) + 1))
-                    item_y = y1 + self.cell_size / 2
-                    item_id = self.map_canvas.create_oval(
-                        item_x - 5, item_y - 5,
-                        item_x + 5, item_y + 5,
-                        fill=color, outline='black', tags="item"
-                    )
-                    tile.item_ids.append(item_id)
-                except ValueError:
-                    continue
+            # Ajouter les nouveaux items
+            if items:
+                # Calculer la disposition des items
+                item_count = len(items)
+                spacing = self.cell_size / (item_count + 1)
 
-        tile.items = items
+                for k, item in enumerate(items):
+                    try:
+                        item_type = ItemType(item)
+                        color = self.item_colors[item_type]
+
+                        # Positionner les items en cercle
+                        angle = (2 * 3.14159 * k) / item_count
+                        center_x = x1 + self.cell_size / 2
+                        center_y = y1 + self.cell_size / 2
+                        radius = self.cell_size / 3
+
+                        item_x = center_x + radius * math.cos(angle)
+                        item_y = center_y + radius * math.sin(angle)
+
+                        item_id = self.map_canvas.create_oval(
+                            item_x - 5, item_y - 5,
+                            item_x + 5, item_y + 5,
+                            fill=color, outline='black', tags="item"
+                        )
+                        tile.item_ids.append(item_id)
+                    except ValueError:
+                        continue
+
+            tile.items = items
 
     def update_player_position(self):
         """Met à jour la position et l'orientation du joueur."""
@@ -269,7 +272,7 @@ class ZappyGUI:
             self.receive_thread = threading.Thread(target=self.receive_messages)
             self.receive_thread.daemon = True
             self.receive_thread.start()
-            self.send_command("tde-los-")
+            self.send_command("debug")
         except Exception as e:
             print(f"Erreur de connexion: {e}")
 
@@ -339,20 +342,26 @@ class ZappyGUI:
             try:
                 # Traiter la vue du joueur
                 items_str = message.strip("{}").split(", ")
+                self.visible_items = items_str  # Stocker les items visibles pour le calcul du niveau
                 visible_tiles = self.get_visible_tiles()
 
-                # Mettre à jour toutes les tuiles
-                for pos in self.grid:
-                    self.update_tile(pos, set(), False)
-
-                # Mettre à jour les tuiles visibles
+                # Mettre à jour uniquement les tuiles qui ont changé
                 for i, items in enumerate(items_str):
                     if i < len(visible_tiles):
-                        tile = visible_tiles[i]
-                        if items:  # Si la tuile n'est pas vide
-                            self.update_tile(tile, set(items.split()), True)
-                        else:
-                            self.update_tile(tile, set(), True)
+                        tile_pos = visible_tiles[i]
+                        current_items = set(items.split()) if items else set()
+
+                        # Vérifier si la tuile a changé
+                        if tile_pos in self.grid:
+                            tile = self.grid[tile_pos]
+                            if tile.items != current_items or not tile.is_visible:
+                                self.update_tile(tile_pos, current_items, True)
+
+                # Marquer les tuiles non visibles
+                for pos in self.grid:
+                    if pos not in visible_tiles and self.grid[pos].is_visible:
+                        self.update_tile(pos, set(), False)
+
             except Exception as e:
                 print(f"Erreur de traitement de la vue: {e}")
 
