@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 15:23:47 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/23 14:35:51 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/26 15:34:35 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@
 	*
 */
 
+mod gui;
 mod app;
 mod server;
 mod game;
@@ -82,6 +83,7 @@ mod utils;
 
 use app::AppState;
 use game::core::state::{game_init, game_loop};
+use gui::display::{display_cleanup, display_init};
 use	server::{init_server, ServerSettings, ServerState};
 
 use std::collections::HashMap;
@@ -102,6 +104,8 @@ fn	main()
 		},
 		settings: config,
 	};
+	display_init();
 	game_loop(&mut app_state);
+	display_cleanup();
 }
 

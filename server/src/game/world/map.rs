@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 21:54:08 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/23 12:39:33 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/26 17:24:21 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@ use rand::prelude::*;
 use rand::rngs::ThreadRng;
 use rand::rng;
 use colored::*;
+
+use crate::game_log;
 
 use super::object::Objet;
 
@@ -28,7 +30,7 @@ pub type Map = Vec<Vec<Cell>>;
 
 pub fn	create_map(width: u32, height: u32) -> Map
 {
-	println!("{}", "[INFO] Création du monde...".bold().green());
+	game_log!("{}", "[INFO] Création du monde...".bold().green());
 
 	let mut rng: ThreadRng = rng();
 	let mut map: Vec<Vec<Cell>> = vec![
@@ -62,7 +64,7 @@ pub fn	create_map(width: u32, height: u32) -> Map
 		}
 	}
 
-	println!("{}", "[INFO] Monde généré !\n".bold().green());
+	game_log!("{}", "[INFO] Monde généré !\n".bold().green());
 	map
 }
 

@@ -6,11 +6,11 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:33:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/23 12:39:08 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/26 15:35:40 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-use crate::game::core::state::GameState;
+use crate::{game::core::state::GameState, game_log};
 use super::inventory::Inventory;
 use crate::game::world::{map, object::Objet};
 
@@ -68,7 +68,7 @@ impl	Player
 		if map::take_object(map, self.pos_x, self.pos_y, obj.clone())
 		{
 			// DEBUG
-			println!("{} {}", format!("[DEBUG] Client #{} a récupéré:", self.id).cyan().italic(), obj.name());
+			game_log!("{} {}", format!("[DEBUG] Client #{} a récupéré:", self.id).cyan().italic(), obj.name());
 
 			self.inventory.add(obj, 1);
 			return true;
@@ -81,7 +81,7 @@ impl	Player
 		if map::drop_object(map, self.pos_x, self.pos_y, obj.clone())
 		{
 			// DEBUG
-			println!("{} {}", format!("[DEBUG] Client #{} a laché:", self.id).cyan().italic(), obj.name());
+			game_log!("{} {}", format!("[DEBUG] Client #{} a laché:", self.id).cyan().italic(), obj.name());
 
 			return self.inventory.remove(obj, 1);
 		}
@@ -98,12 +98,12 @@ impl	Player
 		if self.inventory.get(Objet::food) > 0
 		{
 			// DEBUG
-			println!("{}", format!("[DEBUG] Joueur: {} vient de manger !", self.id).cyan().italic());
+			game_log!("{}", format!("[DEBUG] Joueur: {} vient de manger !", self.id).cyan().italic());
 
 			return self.inventory.remove(Objet::food, 1);
 		}
 		// DEBUG
-		println!("{}", format!("[DEBUG] Joueur: {} n'a pas de nourriture dans son inventaire !", self.id).cyan().italic());
+		game_log!("{}", format!("[DEBUG] Joueur: {} n'a pas de nourriture dans son inventaire !", self.id).cyan().italic());
 		return false;
 	}
 

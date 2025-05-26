@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/23 12:45:14 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/26 15:37:02 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ use colored::*;
 use crate::client::Client;
 use crate::game::core::state::GameState;
 use crate::game::entities::team::add_client_team;
+use crate::game_log;
 
 #[derive(Debug, Clone)]
 pub struct	ServerSettings
@@ -48,12 +49,12 @@ fn	setup_listener(addr: &String) -> TcpListener
         Ok(listener) =>
         {
             listener.set_nonblocking(true).expect("Cannot set non-blocking");
-            println!("🌍 Serveur ouvert sur: {}\n", addr);
+            game_log!("🌍 Serveur ouvert sur: {}\n", addr);
             return listener;
         }
         Err(e) =>
         {
-            println!("❌ Erreur lors de l'écoute sur {}: {}", addr, e);
+            game_log!("❌ Erreur lors de l'écoute sur {}: {}", addr, e);
             exit(-1);
         }
     }
@@ -83,7 +84,7 @@ fn	disconnect_client(clients: &mut HashMap<i32, Client>, game_state: &mut GameSt
                 {
                     if let Some(pos) = team.players.iter().position(|p| p.client_id == Some(id))
                     {
-                        println!("{} Joueur {} est mort", "[DEATH]".red().bold(), team.players[pos].id);
+                        game_log!("{} Joueur {} est mort", "[DEATH]".red().bold(), team.players[pos].id);
                         team.players.remove(pos);
                     }
                     break;
@@ -117,12 +118,12 @@ fn	handle_first_command(client: &mut Client, game_state: &mut GameState) -> bool
     };
 
     let team_name = command.trim();
-    // println!("{} Tentative de connexion à l'équipe: {}", "[DEBUG]".yellow().bold(), team_name);
+    // game_log!("{} Tentative de connexion à l'équipe: {}", "[DEBUG]".yellow().bold(), team_name);
 
     let team_exists = game_state.teams.iter().any(|team| team.name == team_name);
     if !team_exists
     {
-        println!("{} Équipe {} n'existe pas", "[ERROR]".red().bold(), team_name);
+        game_log!("{} Équipe {} n'existe pas", "[ERROR]".red().bold(), team_name);
         client.send_message("ko\n".to_string());
         client.remove_command();
         return false;
@@ -133,7 +134,7 @@ fn	handle_first_command(client: &mut Client, game_state: &mut GameState) -> bool
         Some(id) => id,
         None =>
         {
-            println!("{} Impossible de rejoindre l'équipe {}", "[ERROR]".red().bold(), team_name);
+            game_log!("{} Impossible de rejoindre l'équipe {}", "[ERROR]".red().bold(), team_name);
             client.send_message("ko\n".to_string());
             client.remove_command();
             return false;
@@ -158,7 +159,7 @@ fn	handle_first_command(client: &mut Client, game_state: &mut GameState) -> bool
     client.send_message(format!("{}\n{} {}\n", connect_nbr, map_width, map_height));
     client.remove_command();
 
-    println!("{} Client #{} a rejoint l'équipe {}", "[SUCCESS]".green().bold(), client.id, team_name);
+    game_log!("{} Client #{} a rejoint l'équipe {}", "[SUCCESS]".green().bold(), client.id, team_name);
 
     return true;
 }

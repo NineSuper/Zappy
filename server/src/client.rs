@@ -6,13 +6,15 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:11:11 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/21 16:19:31 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/26 18:04:54 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 use std::net::{IpAddr, SocketAddr, TcpStream};
 use colored::*;
 use std::io::{Write, Read};
+
+use crate::game_log;
 
 #[derive(Debug)]
 pub struct PendingCommand {
@@ -36,7 +38,7 @@ impl	Client
 {
 	pub fn	new(stream: TcpStream, addr: SocketAddr, id: i32) -> Self
 	{
-		println!("{} Client #{id} (IP: {addr})", format!("[+]").green().bold());
+		game_log!("{} Client #{id} (IP: {addr})", format!("[+]").green().bold());
 		Self
 		{
 			id: id,
@@ -67,7 +69,7 @@ impl	Client
 
 		if self.pending_commands.len() < 10
 		{
-			println!("{} Client #{}: {}", "[RECV]".cyan().bold(), self.id, command.bold().cyan().italic());
+			game_log!("{} Client #{}: {}", "[RECV]".cyan().bold(), self.id, command.bold().cyan().italic());
 			self.pending_commands.push(PendingCommand {
 				command,
 				ticks_remaining: ticks,
@@ -79,7 +81,7 @@ impl	Client
 	{
 		if let Some(msg) = self.commands.get(0)
 		{
-			println!("{}", msg);
+			game_log!("{}", msg);
 			return Some(msg);
 		}
 		return None;
@@ -97,14 +99,14 @@ impl	Client
 	{
 		if let Err(e) = self.stream.write_all(msg.as_bytes())
 		{
-			println!("{} {}", format!("[ERROR] impossible d'envoyer un message au client {}:", self.id).red().bold(), e);
+			game_log!("{} {}", format!("[ERROR] impossible d'envoyer un message au client {}:", self.id).red().bold(), e);
 		}
-		println!("{} Server -> Client #{}: {}", "[SEND]".blue().bold(), self.id, msg.trim_end().italic().cyan().bold());
+		game_log!("{} Server -> Client #{}: {}", "[SEND]".blue().bold(), self.id, msg.trim_end().italic().cyan().bold());
 	}
 
 	pub fn	disconnect(&mut self)
 	{
-		println!("{} Client #{} (IP: {})", format!("[-]").red().bold(), self.id, self.addr);
+		game_log!("{} Client #{} (IP: {})", format!("[-]").red().bold(), self.id, self.addr);
 	}
 
 	pub fn	read_from_stream(&mut self) -> bool

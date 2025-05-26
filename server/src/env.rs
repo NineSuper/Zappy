@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 15:06:42 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/19 12:01:20 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/26 18:46:18 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ pub	fn	init_env() -> ServerSettings
 		time_unit: get_var_time(&args, 't'),
 		teams_name: get_teams(&args)
 	};
-	print_env(config.clone());
+	// print_env(config.clone());
 	return config;
 }
 

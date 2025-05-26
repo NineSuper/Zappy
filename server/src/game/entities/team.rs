@@ -6,12 +6,12 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:31:03 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/21 16:16:01 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/26 15:35:58 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 use colored::*;
-use crate::utils::get_random_color;
+use crate::{game_log, utils::get_random_color};
 use super::player::Player;
 
 #[derive(Debug, Clone)]
@@ -76,7 +76,7 @@ impl	Team
 				self.connect_nbr += 1;
 				player.client_id = Some(client_id);
 
-				println!("{} Client #{} a rejoint: {}({})", "[TEAM]".magenta().bold(), client_id, self.name, self.id);
+				game_log!("{} Client #{} a rejoint: {}({})", "[TEAM]".magenta().bold(), client_id, self.name, self.id);
 				return Some(player.id.clone());
 			}
 		}
@@ -89,7 +89,7 @@ impl	Team
 		{
 			if player.client_id == Some(client_id)
 			{
-				println!("{} Client #{} a quitté: {}({})", "[TEAM]".red().bold(), client_id, self.name, self.id);
+				game_log!("{} Client #{} a quitté: {}({})", "[TEAM]".red().bold(), client_id, self.name, self.id);
 				self.connect_nbr -= 1;
 				player.client_id = None;
 			}
@@ -118,7 +118,7 @@ pub fn	add_client_team(name: String, teams: &mut Vec<Team>, client_id: i32) -> O
                 team.players.push(player);
                 team.connect_nbr -= 1;
 
-                println!("{} Nouveau joueur {} a rejoint l'équipe {}", "[BIRTH]".green().bold(), player_id, name);
+                game_log!("{} Nouveau joueur {} a rejoint l'équipe {}", "[BIRTH]".green().bold(), player_id, name);
                 return Some(player_id);
             }
             return None;
@@ -143,15 +143,15 @@ pub fn	create_team(teams: Vec<String>) -> Vec<Team>
 	let mut	all_team: Vec<Team> = vec![];
 	let mut i: u32 = 1;
 
-	println!("{}", "[INFO] Création des équipes...".bold().green());
+	game_log!("{}", "[INFO] Création des équipes...".bold().green());
 	for team_name in teams
 	{
 		let new_team: Team = Team::new(&team_name.to_string(), i);
 
 		all_team.push(new_team);
-		println!("{} #{i}: {}", format!("[Team]").magenta().bold(), team_name.color(get_random_color()).bold());
+		game_log!("{} #{i}: {}", format!("[Team]").magenta().bold(), team_name.color(get_random_color()).bold());
 		i += 1;
 	}
-	println!("{}", "[INFO] Les équipes ont été créées !\n".bold().green());
+	game_log!("{}", "[INFO] Les équipes ont été créées !\n".bold().green());
 	return all_team;
 }

@@ -6,3 +6,6 @@ version = "0.0.1"
 [dependencies]
 colored = "3.0.0"
 rand = "0.9.1"
+crossterm = "0.29"
+ratatui = "0.29"
+lazy_static = "1.4"
