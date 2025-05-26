@@ -118,7 +118,7 @@ install:
 
 server:
 	@$(SERV_START)
-	@cd $(SERVER_DIR) && $(SERVER_CC) $(SERVER_FLAG)
+	@cd $(SERVER_DIR) && $(SERVER_DEBUG) $(SERVER_CC) $(SERVER_FLAG)
 	@cp $(SERVER_DIR)/target/release/$(notdir $(SERVER_DIR)) $(SERVER_BIN)
 	@$(SERV_READY)
 

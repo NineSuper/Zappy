@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 13:10:07 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/26 18:45:48 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/26 18:59:11 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ pub fn	game_loop(app_state: &mut AppState)
     let tick_duration = std::time::Duration::from_secs_f64(1.0 / app_state.settings.time_unit);
     let display_tick = std::time::Duration::from_secs_f64(1.0 / 20.0);
     let mut last_tick = Instant::now();
+    let mut last_tick_display = Instant::now();
 
     loop
     {
@@ -57,11 +58,12 @@ pub fn	game_loop(app_state: &mut AppState)
             last_tick = now;
         }
         server_loop(&mut app_state.server, &mut app_state.game);
-        if now.duration_since(last_tick) >= display_tick {
+        if now.duration_since(last_tick_display) >= display_tick {
             display_gui(&app_state);
+            last_tick_display = now;
         }
         if handle_input() {
-            break ;
+            break;
         }
     }
 }
