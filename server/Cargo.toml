@@ -9,3 +9,4 @@ rand = "0.9.1"
 crossterm = "0.29"
 ratatui = "0.29"
 lazy_static = "1.4"
+sysinfo = { version = "0.35.1", features = ["network"] }

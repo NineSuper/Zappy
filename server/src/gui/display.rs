@@ -6,13 +6,13 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 18:44:26 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/26 19:11:54 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/27 01:10:54 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 use std::{
 	io,
-	sync::Mutex,
+	sync::{Arc, Mutex},
 	time::Instant,
 };
 
@@ -33,6 +33,8 @@ use ratatui::{
 	Terminal, Frame,
 };
 
+use sysinfo::{Networks, System};
+
 use crate::AppState;
 
 lazy_static! {
@@ -49,19 +51,20 @@ static mut DISPLAY: Option<Display> = None;
 
 // Structure pour stocker les métriques système
 #[derive(Debug, Clone)]
-pub struct SystemMetrics {
-	cpu_usage: f64,
-	memory_usage: f64,
-	memory_total: u64,
-	memory_used: u64,
-	network_rx_bytes: u64,
-	network_tx_bytes: u64,
-	network_rx_rate: f64, // bytes/sec
-	network_tx_rate: f64, // bytes/sec
+pub struct	SystemMetrics
+{
+	pub cpu_usage: f32,
+	pub memory_usage: f32,
+	pub memory_used: u64,
+	pub memory_total: u64,
+	pub network_rx_rate: f64,
+	pub network_tx_rate: f64,
+	pub network_rx_bytes: u64,
+	pub network_tx_bytes: u64,
 }
-
-impl Default for SystemMetrics {
-	fn default() -> Self {
+impl Default for SystemMetrics
+{
+	fn	default() -> Self {
 		Self {
 			cpu_usage: 0.0,
 			memory_usage: 0.0,
@@ -75,8 +78,20 @@ impl Default for SystemMetrics {
 	}
 }
 
-lazy_static! {
-	static ref SYSTEM_METRICS: Mutex<SystemMetrics> = Mutex::new(SystemMetrics::default());
+lazy_static::lazy_static!
+{
+    static ref SYSTEM_METRICS: Arc<Mutex<SystemMetrics>> = Arc::new(Mutex::new(SystemMetrics {
+        cpu_usage: 0.0,
+        memory_usage: 0.0,
+        memory_used: 0,
+        memory_total: 0,
+        network_rx_rate: 0.0,
+        network_tx_rate: 0.0,
+        network_rx_bytes: 0,
+        network_tx_bytes: 0,
+    }));
+    static ref SYSTEM_MONITOR: Arc<Mutex<Option<System>>> = Arc::new(Mutex::new(None));
+    static ref LAST_NETWORK_STATS: Arc<Mutex<(u64, u64, Instant)>> = Arc::new(Mutex::new((0, 0, Instant::now())));
 }
 
 pub fn	display_init()
@@ -117,31 +132,60 @@ pub fn  display_cleanup()
 }
 
 // Fonction pour mettre à jour les métriques système
-pub fn update_system_metrics() {
-	// Simulation de métriques réalistes (remplace par des vraies métriques)
-	use std::time::{SystemTime, UNIX_EPOCH};
-	let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
+fn	update_system_metrics()
+{
+    let mut system_opt = SYSTEM_MONITOR.lock().unwrap();
 
-	let mut metrics = SYSTEM_METRICS.lock().unwrap();
+    if system_opt.is_none() {
+        *system_opt = Some(System::new_all());
+    }
 
-	// CPU: simulation avec variation sinusoïdale + bruit
-	metrics.cpu_usage = (30.0 + 25.0 * ((now as f64) / 10.0).sin() +
-						10.0 * ((now as f64) / 3.0).cos()).max(0.0).min(100.0);
+    if let Some(ref mut system) = system_opt.as_mut() {
+        system.refresh_cpu_all();
+        system.refresh_memory();
 
-	// Memory: simulation plus stable avec légère variation
-	metrics.memory_total = 16 * 1024 * 1024 * 1024; // 16GB
-	metrics.memory_usage = 45.0 + 15.0 * ((now as f64) / 20.0).sin();
-	metrics.memory_used = (metrics.memory_total as f64 * metrics.memory_usage / 100.0) as u64;
+        let mut metrics = SYSTEM_METRICS.lock().unwrap();
 
-	// Network: simulation de trafic avec pics occasionnels
-	let base_rx = 1024 * 1024; // 1MB/s base
-	let base_tx = 512 * 1024;  // 512KB/s base
+        // CPU Usage
+        let cpu_usage = system.cpus().iter()
+            .map(|cpu| cpu.cpu_usage())
+            .sum::<f32>() / system.cpus().len() as f32;
+        metrics.cpu_usage = cpu_usage;
 
-	metrics.network_rx_rate = base_rx as f64 * (1.0 + 2.0 * ((now as f64) / 15.0).sin().abs());
-	metrics.network_tx_rate = base_tx as f64 * (1.0 + 1.5 * ((now as f64) / 12.0).cos().abs());
+        // Memory Usage
+        metrics.memory_used = system.used_memory();
+        metrics.memory_total = system.total_memory();
+        metrics.memory_usage = if metrics.memory_total > 0 {
+            (metrics.memory_used as f32 / metrics.memory_total as f32) * 100.0
+        } else {
+            0.0
+        };
 
-	metrics.network_rx_bytes += metrics.network_rx_rate as u64;
-	metrics.network_tx_bytes += metrics.network_tx_rate as u64;
+        let mut networks = Networks::new_with_refreshed_list();
+        networks.refresh(true);
+
+        let (total_rx, total_tx) = networks.iter().fold((0u64, 0u64), |(rx_acc, tx_acc), (_iface, data)| {
+            (rx_acc + data.received(), tx_acc + data.transmitted())
+        });
+
+        let now = Instant::now();
+        let mut last_stats = LAST_NETWORK_STATS.lock().unwrap();
+        let time_diff = now.duration_since(last_stats.2).as_secs_f64();
+
+        if time_diff > 0.0
+		{
+            let rx_diff = total_rx.saturating_sub(last_stats.0);
+            let tx_diff = total_tx.saturating_sub(last_stats.1);
+
+            metrics.network_rx_rate = rx_diff as f64 / time_diff;
+            metrics.network_tx_rate = tx_diff as f64 / time_diff;
+        }
+
+        metrics.network_rx_bytes = total_rx;
+        metrics.network_tx_bytes = total_tx;
+
+        *last_stats = (total_rx, total_tx, now);
+    }
 }
 
 #[macro_export]
@@ -361,31 +405,39 @@ fn	ansi_to_ratatui_line(text: &str) -> Line
 }
 
 // Fonction utilitaire pour formater les bytes
-fn format_bytes(bytes: u64) -> String {
-	const UNITS: &[&str] = &["B", "KB", "MB", "GB", "TB"];
-	let mut size = bytes as f64;
-	let mut unit_index = 0;
+fn	format_bytes(bytes: u64) -> String
+{
+    const UNITS: &[&str] = &["B", "KB", "MB", "GB", "TB"];
 
-	while size >= 1024.0 && unit_index < UNITS.len() - 1 {
-		size /= 1024.0;
-		unit_index += 1;
-	}
+    if bytes == 0 {
+        return "0 B".to_string();
+    }
 
-	if unit_index == 0 {
-		format!("{} {}", bytes, UNITS[unit_index])
-	} else {
-		format!("{:.1} {}", size, UNITS[unit_index])
-	}
+    let mut size = bytes as f64;
+    let mut unit_index = 0;
+
+    while size >= 1024.0 && unit_index < UNITS.len() - 1 {
+        size /= 1024.0;
+        unit_index += 1;
+    }
+
+    if unit_index == 0 {
+        format!("{} {}", size as u64, UNITS[unit_index])
+    } else {
+        format!("{:.1} {}", size, UNITS[unit_index])
+    }
 }
 
-// Fonction pour obtenir la couleur selon le pourcentage
-fn get_percentage_color(percentage: f64) -> Color {
-	match percentage {
+fn	get_percentage_color(percentage: f32) -> ratatui::style::Color
+{
+    use ratatui::style::Color;
+
+    match percentage {
 		p if p < 30.0 => Color::Green,
 		p if p < 60.0 => Color::Yellow,
 		p if p < 80.0 => Color::LightRed,
-		_ => Color::Red,
-	}
+        _ => Color::Red,
+    }
 }
 
 pub fn	display_gui(app_state: &AppState)
@@ -414,7 +466,7 @@ fn	draw_ui(f: &mut Frame, app_state: &AppState, _start_time: &Instant, logs: &[S
 		.margin(1)
 		.constraints([
 			Constraint::Min(5),      // Logs
-			Constraint::Length(8),   // Status (augmenté pour les barres)
+			Constraint::Length(6),   // Status (augmenté pour les barres)
 			Constraint::Length(3)    // Help
 		])
 		.split(size);
@@ -474,6 +526,7 @@ fn	draw_ui(f: &mut Frame, app_state: &AppState, _start_time: &Instant, logs: &[S
 	f.render_widget(status_left, info_chunks[0]);
 
 	// Section système (centre) avec métriques réelles
+	update_system_metrics();
 	let metrics = SYSTEM_METRICS.lock().unwrap();
 
 	// Calculer les layouts pour les barres de progression
@@ -483,9 +536,7 @@ fn	draw_ui(f: &mut Frame, app_state: &AppState, _start_time: &Instant, logs: &[S
 		.margin(1)
 		.constraints([
 			Constraint::Length(1), // CPU label
-			Constraint::Length(1), // CPU bar
 			Constraint::Length(1), // Memory label
-			Constraint::Length(1), // Memory bar
 			Constraint::Length(1), // Spacing
 		])
 		.split(system_area);
@@ -519,9 +570,6 @@ fn	draw_ui(f: &mut Frame, app_state: &AppState, _start_time: &Instant, logs: &[S
 	// Section réseau (droite)
 	let network_lines = vec![
 		Line::from(vec![
-			Span::styled("📡 Réseau", Style::default().fg(Color::Green).add_modifier(Modifier::BOLD))
-		]),
-		Line::from(vec![
 			Span::styled("📥 RX: ", Style::default().fg(Color::LightBlue)),
 			Span::styled(format_bytes(metrics.network_rx_rate as u64), Style::default().fg(Color::White).add_modifier(Modifier::BOLD)),
 			Span::styled("/s", Style::default().fg(Color::Gray))
@@ -542,7 +590,7 @@ fn	draw_ui(f: &mut Frame, app_state: &AppState, _start_time: &Instant, logs: &[S
 	];
 
 	let status_right = Paragraph::new(Text::from(network_lines))
-		.block(Block::default().borders(Borders::ALL).title("🌐 Réseau"))
+		.block(Block::default().borders(Borders::ALL).title("📡 Réseau"))
 		.style(Style::default().fg(Color::Green));
 
 	f.render_widget(status_right, info_chunks[2]);

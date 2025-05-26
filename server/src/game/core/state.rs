@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 13:10:07 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/26 18:59:11 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/05/27 00:20:52 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,12 @@ pub fn	game_loop(app_state: &mut AppState)
     {
         let now = Instant::now();
 
+        if handle_input() {
+            break;
+        }
         if now.duration_since(last_tick) >= tick_duration
         {
-            for client in app_state.server.clients.values_mut()
-            {
+            for client in app_state.server.clients.values_mut() {
                 handle_client(client, &mut app_state.game);
             }
             update_game(app_state);
@@ -61,9 +63,6 @@ pub fn	game_loop(app_state: &mut AppState)
         if now.duration_since(last_tick_display) >= display_tick {
             display_gui(&app_state);
             last_tick_display = now;
-        }
-        if handle_input() {
-            break;
         }
     }
 }
