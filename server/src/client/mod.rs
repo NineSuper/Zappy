@@ -1,30 +1,13 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.rs                                           :+:      :+:    :+:   */
+/*   mod.rs                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/07 23:42:07 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/08 00:57:28 by tde-los-         ###   ########.fr       */
+/*   Created: 2025/06/03 16:15:24 by tde-los-          #+#    #+#             */
+/*   Updated: 2025/06/03 16:15:29 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-use colored::Color;
-use rand::rng;
-use rand::prelude::IndexedRandom;
-
-pub fn	get_random_color() -> Color
-{
-	let colors = [
-		Color::Red,
-		Color::Green,
-		Color::Yellow,
-		Color::Blue,
-		Color::Magenta,
-		Color::Cyan,
-		Color::White,
-	];
-
-	*colors.choose(&mut rng()).unwrap()
-}
+pub mod client;

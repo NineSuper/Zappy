@@ -6,14 +6,14 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 13:10:07 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/27 00:20:52 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/03 16:28:33 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /*
-	TODO faire game init [x]
-	TODO faire une structure game [x]
-	TODO faire game loop [x]
+    TODO faire game init [x]
+    TODO faire une structure game [x]
+    TODO faire game loop [x]
 */
 
 use crate::app::AppState;
@@ -26,33 +26,28 @@ use crate::server::{handle_client, server_loop, ServerSettings};
 use std::time::Instant;
 
 #[derive(Debug, Clone)]
-pub struct	GameState
-{
-	pub	map: Vec<Vec<Cell>>,
-	pub	teams: Vec<Team>,
+pub struct GameState {
+    pub map: Vec<Vec<Cell>>,
+    pub teams: Vec<Team>,
 }
 
-pub fn	update_game(_app_state: &mut AppState)
-{
+pub fn update_game(_app_state: &mut AppState) {
 
 }
 
-pub fn	game_loop(app_state: &mut AppState)
-{
+pub fn game_loop(app_state: &mut AppState) {
     let tick_duration = std::time::Duration::from_secs_f64(1.0 / app_state.settings.time_unit);
-    let display_tick = std::time::Duration::from_secs_f64(1.0 / 20.0);
+    let display_tick = std::time::Duration::from_secs_f64(1.0 / 10.0);
     let mut last_tick = Instant::now();
     let mut last_tick_display = Instant::now();
 
-    loop
-    {
+    loop {
         let now = Instant::now();
 
         if handle_input() {
             break;
         }
-        if now.duration_since(last_tick) >= tick_duration
-        {
+        if now.duration_since(last_tick) >= tick_duration {
             for client in app_state.server.clients.values_mut() {
                 handle_client(client, &mut app_state.game);
             }
@@ -67,11 +62,9 @@ pub fn	game_loop(app_state: &mut AppState)
     }
 }
 
-pub fn	game_init(config: &mut ServerSettings) -> GameState
-{
-	GameState
-	{
-		map: map::create_map(config.width, config.height),
-		teams: team::create_team(config.teams_name.clone()),
-	}
+pub fn game_init(config: &mut ServerSettings) -> GameState {
+    GameState {
+        map: map::create_map(config.width, config.height),
+        teams: team::create_team(config.teams_name.clone()),
+    }
 }
