@@ -21,6 +21,7 @@ SERVER_FLAG = --release
 SERVER_DIR 	= server
 SERVER_SRC 	= $(SERVER_DIR)/src
 SERVER_DEBUG = RUSTFLAGS="-Awarnings"
+# SERVER_DEBUG =
 
 # TODO
 CLIENT_BIN 	= $(BIN_DIR)/client
@@ -28,7 +29,7 @@ CLIENT_CC  	= cargo build
 CLIENT_FLAG = --release
 CLIENT_DIR 	= client
 CLIENT_SRC 	= $(CLIENT_DIR)/src
-SERVER_DEBUG = RUSTFLAGS="-Awarnings"
+CLIENT_DEBUG = RUSTFLAGS="-Awarnings"
 
 # TODO
 GFX_BIN 	= $(BIN_DIR)/gfx
@@ -123,7 +124,6 @@ server:
 	@$(SERV_READY)
 
 server_clean:
-	rm -f $(SERVER_BIN)
 	@cd $(SERVER_DIR) && cargo clean
 	rm -f $(SERVER_DIR)/*.lock
 
@@ -134,7 +134,6 @@ client:
 	@$(CLIENT_READY)
 
 client_clean:
-	rm -f $(CLIENT_BIN)
 	@cd $(CLIENT_DIR) && cargo clean
 	rm -f $(CLIENT_DIR)/*.lock
 
@@ -152,6 +151,8 @@ clean:
 	rm -f $(GFX_BIN)
 
 fclean: clean
+	rm -f $(SERVER_BIN)
+	rm -f $(CLIENT_BIN)
 	$(FCLEANED)
 
 re: fclean all
