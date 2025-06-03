@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 15:23:47 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/19 10:16:29 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/03 16:19:38 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,18 +47,17 @@
 	*     - Gérer le temps de vie (nourriture consommée avec le temps)
 	*     - Gérer le fork / naissance / mort
 	*
-	* [ ] Implémenter le moteur de commandes :
+	* [x] Implémenter le moteur de commandes :
 	*     - Lecture de la file de commandes du client
 	*     - Exécution dans l’ordre avec le bon délai
 	*     - Réponses envoyées via socket
 	*     - Commandes à gérer : avance, voir, inventaire, prend, pose, incantation, etc.
 	*
-	* [ ] Implémenter le protocole réseau :
+	* [x] Implémenter le protocole réseau :
 	*     - Format des messages (`BIENVENUE\n`, `message <k>,<txt>`, etc.)
-	*     - Envoi des données au client graphique
 	*     - Gestion du buffer (max 10 commandes par client en attente)
 	*
-	* [ ] Gérer le temps :
+	* [x] Gérer le temps :
 	*     - Boucle serveur basée sur un "tick" système
 	*     - Exécution différée des commandes selon leur coût (ex : avance = 7/t)
 	*     - Pas de `sleep()` bloquant → système non-bloquant
@@ -75,34 +74,34 @@
 */
 
 mod app;
+mod config;
 mod server;
-mod game;
-mod env;
 mod client;
+mod game;
+mod gui;
 mod utils;
 
 use app::AppState;
 use game::core::state::{game_init, game_loop};
-use	server::{init_server, ServerSettings, ServerState};
+use gui::display::{display_cleanup, display_init};
+use server::{init_server, ServerSettings, ServerState};
 
 use std::collections::HashMap;
 
-fn	main()
-{
-	let mut	config: ServerSettings = env::init_env();
+fn main() {
+    let mut config: ServerSettings = config::env::init_env();
 
-	let mut app_state: AppState = AppState
-	{
-		game: game_init(&mut config),
-		server: ServerState
-		{
-			clients: HashMap::new(),
-			listener: init_server(&config),
-			connexion_max: config.connexion_max,
-			next_id: 0,
-		},
-		settings: config,
-	};
-	game_loop(&mut app_state);
+    let mut app_state: AppState = AppState {
+        game: game_init(&mut config),
+        server: ServerState {
+            clients: HashMap::new(),
+            listener: init_server(&config),
+            connexion_max: config.connexion_max,
+            next_id: 0,
+        },
+        settings: config,
+    };
+    display_init();
+    game_loop(&mut app_state);
+    display_cleanup();
 }
-
