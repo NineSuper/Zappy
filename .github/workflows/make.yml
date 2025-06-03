@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - NineSuper
+      - dev/server
   pull_request:
     branches:
       - main
