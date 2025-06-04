@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/04 18:29:46 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/04 19:10:35 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,9 @@ fn setup_listener(addr: &String) -> TcpListener
 		Ok(listener) =>
 		{
 			listener.set_nonblocking(true).expect("Cannot set non-blocking");
+			game_log!("{}\n", "==========================================".yellow());
 			game_log!("🌍 Serveur ouvert sur: {}\n", addr);
+			game_log!("{}\n", "==========================================".yellow());
 			return listener;
 		}
 		Err(e) =>
@@ -128,9 +130,9 @@ fn handle_first_command(client: &mut Client, game_state: &mut GameState) -> bool
 	let team_exists = game_state.teams.iter().any(|team| team.name == team_name);
 	if !team_exists
 	{
-		game_log!("{} Équipe {} n'existe pas", "[ERROR]".red().bold(), team_name);
-		client.send_message("ko\n".to_string());
+        client.send_message("ko\n".to_string());
 		client.remove_command();
+		game_log!("{} Équipe {} n'existe pas", "[ERROR]".red().bold(), team_name);
 		return false;
 	}
 
@@ -139,9 +141,9 @@ fn handle_first_command(client: &mut Client, game_state: &mut GameState) -> bool
 		Some(id) => id,
 		None =>
 		{
-			game_log!("{} Impossible de rejoindre l'équipe {}", "[ERROR]".red().bold(), team_name);
-			client.send_message("ko\n".to_string());
+            client.send_message("ko\n".to_string());
 			client.remove_command();
+			game_log!("{} Impossible de rejoindre l'équipe {}", "[ERROR]".red().bold(), team_name);
 			return false;
 		}
 	};
