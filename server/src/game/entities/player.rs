@@ -54,7 +54,7 @@ impl Player
 			pos_y: 1, // TODO
 			inventory: Inventory::new(),
 			life_unit: 10,
-			level: 8,
+			level: 1,
 			direction: Direction::North,
 			health_points: 100,
 			client_id: None,
