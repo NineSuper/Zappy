@@ -14,16 +14,17 @@ use colored::Color;
 use rand::prelude::IndexedRandom;
 use rand::rng;
 
-pub fn get_random_color() -> Color {
-    let colors = [
-        Color::Red,
-        Color::Green,
-        Color::Yellow,
-        Color::Blue,
-        Color::Magenta,
-        Color::Cyan,
-        Color::White,
-    ];
+pub fn get_random_color() -> Color
+{
+	let colors = [
+		Color::Red,
+		Color::Green,
+		Color::Yellow,
+		Color::Blue,
+		Color::Magenta,
+		Color::Cyan,
+		Color::White,
+	];
 
-    *colors.choose(&mut rng()).unwrap()
+	*colors.choose(&mut rng()).unwrap()
 }
