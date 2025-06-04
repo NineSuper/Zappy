@@ -6,13 +6,15 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:33:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/27 12:49:43 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/04 14:08:19 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 use super::inventory::Inventory;
-use crate::game::world::{map, object::Objet};
-use crate::{game::core::state::GameState, game_log};
+use crate::game::world::map;
+use crate::{game::core::gamestate::GameState, game_log};
+use crate::game::entities::object::Objet;
+
 
 use colored::*;
 
@@ -54,7 +56,7 @@ impl Player {
             health_points: 100,
             client_id: None,
         };
-        player.inventory.add(Objet::food, 10);
+        player.inventory.add(Objet::Food, 10);
         return player;
     }
 
@@ -98,8 +100,8 @@ impl Player {
         One 'nourriture' unit allows him to survive 126 time units,
         therefore 126/t seconds.
     */
-    pub fn eat(&mut self) -> bool {
-        if self.inventory.get(Objet::food) > 0 {
+    pub fn _eat(&mut self) -> bool {
+        if self.inventory.get(Objet::Food) > 0 {
             // DEBUG
             game_log!(
                 "{}",
@@ -108,7 +110,7 @@ impl Player {
                     .italic()
             );
 
-            return self.inventory.remove(Objet::food, 1);
+            return self.inventory.remove(Objet::Food, 1);
         }
         // DEBUG
         game_log!(
@@ -158,11 +160,11 @@ impl Player {
         }
     }
 
-    pub fn get_direction(&self) -> &Direction {
+    pub fn _get_direction(&self) -> &Direction {
         &self.direction
     }
 
-    pub fn get_health_points(&self) -> i32 {
+    pub fn _get_health_points(&self) -> i32 {
         self.health_points
     }
 

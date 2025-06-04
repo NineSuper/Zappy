@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:11:11 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/26 18:04:54 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/03 17:23:51 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ impl Client {
         }
     }
 
-    pub fn get_command(&self) -> Option<&String> {
+    pub fn _get_command(&self) -> Option<&String> {
         if let Some(msg) = self.commands.get(0) {
             game_log!("{}", msg);
             return Some(msg);
@@ -159,13 +159,16 @@ impl Client {
     pub fn get_stream(&self) -> &TcpStream {
         &self.stream
     }
-    pub fn get_addr(&self) -> SocketAddr {
+
+    pub fn _get_addr(&self) -> SocketAddr {
         self.addr
     }
-    pub fn get_ip(&self) -> IpAddr {
+
+    pub fn _get_ip(&self) -> IpAddr {
         self.addr.ip()
     }
-    pub fn get_port(&self) -> u16 {
+
+    pub fn _get_port(&self) -> u16 {
         self.addr.port()
     }
 }

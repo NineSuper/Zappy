@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/03 16:24:01 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/04 12:07:25 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ use std::net::TcpListener;
 use std::process::exit;
 
 use crate::client::client::Client;
-use crate::game::core::state::GameState;
+use crate::game::core::gamestate::GameState;
 use crate::game::entities::team::add_client_team;
 use crate::game_log;
 
@@ -228,7 +228,7 @@ pub fn handle_client(client: &mut Client, game_state: &mut GameState) {
                 client.send_message("ok\n".to_string());
             }
             "broadcast" => {
-                if let Some(message) = args {
+                if let Some(_message) = args {
                     // game_state.player_broadcast(client.id, message);
                     client.send_message("ok\n".to_string());
                 } else {

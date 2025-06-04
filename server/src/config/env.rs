@@ -6,56 +6,17 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 15:06:42 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/27 12:28:55 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/03 17:22:23 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 use crate::ServerSettings;
-use colored::*;
 use std::{char, env::args, process::exit};
 
 fn get_args() -> Vec<String> {
     let mut args: Vec<String> = args().collect();
     args.remove(0);
     return args;
-}
-
-fn print_env(config: ServerSettings) {
-    let line = "🟩=============== Zappy Server ===============🟩";
-    println!("{}", line.green().bold());
-
-    println!(
-        "{} {}",
-        "🌐 IP Address :".green().bold(),
-        format!("127.0.0.1:{}", config.port).bold().underline()
-    );
-    println!(
-        "{} {}",
-        "📏 Map Size   :".green().bold(),
-        format!("{} x {} px", config.width, config.height).bold()
-    );
-    println!(
-        "{} {}",
-        "👥 Connexion Max :".green().bold(),
-        format!("{}", config.connexion_max).bold()
-    );
-    println!(
-        "{} {}",
-        "⏱️  Time Unit  :".green().bold(),
-        format!("{}t", config.time_unit).bold()
-    );
-    println!(
-        "{} {}",
-        "🏳️  Teams      :".green().bold(),
-        config.teams_name.join(", ").bold()
-    );
-
-    println!(
-        "{}",
-        "================================================\n"
-            .green()
-            .bold()
-    );
 }
 
 fn get_var(args: &[String], flag: char) -> u32 {
@@ -129,6 +90,5 @@ pub fn init_env() -> ServerSettings {
         time_unit: get_var_time(&args, 't'),
         teams_name: get_teams(&args),
     };
-    // print_env(config.clone());
     return config;
 }

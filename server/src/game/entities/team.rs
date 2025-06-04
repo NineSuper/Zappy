@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:31:03 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/03 16:24:37 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/03 17:28:28 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ use colored::*;
 pub struct Team {
     pub id: u32,
     pub name: String,
-    level: u16,
+    _level: u16,
     next_player_id: u32,
     connect_nbr: u32,
     pub players: Vec<Player>,
@@ -26,10 +26,10 @@ pub struct Team {
 
 impl Team {
     pub fn new(team_name: &str, id: u32) -> Self {
-        let mut team = Self {
+        let team = Self {
             id,
             name: team_name.to_string(),
-            level: 1,
+            _level: 1,
             players: Vec::new(),
             next_player_id: 1,
             connect_nbr: 1,
@@ -37,7 +37,7 @@ impl Team {
         return team;
     }
 
-    pub fn add_player(&mut self) {
+    pub fn _add_player(&mut self) {
         let str = format!("{}_{}", self.id, self.next_player_id);
         let player: Player = Player::new(str);
 
@@ -45,21 +45,21 @@ impl Team {
         self.players.push(player);
     }
 
-    pub fn remove_player(&mut self, player: &Player) {
+    pub fn _remove_player(&mut self, player: &Player) {
         if let Some(pos) = self.players.iter().position(|p: &Player| p == player) {
             self.players.remove(pos);
         }
     }
 
-    pub fn add_level(&mut self) {
-        self.level += 1;
+    pub fn _add_level(&mut self) {
+        self._level += 1;
     }
 
-    pub fn add_connect_nbr(&mut self) {
+    pub fn _add_connect_nbr(&mut self) {
         self.connect_nbr += 1;
     }
 
-    pub fn assign_player(&mut self, client_id: i32) -> Option<String> {
+    pub fn _assign_player(&mut self, client_id: i32) -> Option<String> {
         for player in &mut self.players {
             if player.client_id.is_none() {
                 self.connect_nbr += 1;
@@ -78,7 +78,7 @@ impl Team {
         return None;
     }
 
-    pub fn unassign_player(&mut self, client_id: i32) {
+    pub fn _unassign_player(&mut self, client_id: i32) {
         for player in &mut self.players.iter_mut() {
             if player.client_id == Some(client_id) {
                 game_log!(
@@ -94,13 +94,13 @@ impl Team {
         }
     }
 
-    pub fn get_level(&mut self) -> u16 {
-        self.level
+    pub fn _get_level(&mut self) -> u16 {
+        self._level
     }
-    pub fn get_players(&self) -> &Vec<Player> {
+    pub fn _get_players(&self) -> &Vec<Player> {
         &self.players
     }
-    pub fn get_players_mut(&mut self) -> &mut Vec<Player> {
+    pub fn _get_players_mut(&mut self) -> &mut Vec<Player> {
         &mut self.players
     }
     pub fn get_connect_nbr(&self) -> u32 {
@@ -134,10 +134,10 @@ pub fn add_client_team(name: String, teams: &mut Vec<Team>, client_id: i32) -> O
     return None;
 }
 
-pub fn remove_client_team(team_id: u32, teams: &mut Vec<Team>, client_id: i32) {
+pub fn _remove_client_team(team_id: u32, teams: &mut Vec<Team>, client_id: i32) {
     for team in teams.iter_mut() {
         if team.id == team_id {
-            team.unassign_player(client_id);
+            team._unassign_player(client_id);
         }
     }
 }
