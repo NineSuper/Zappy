@@ -10,14 +10,15 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-pub mod team;
-pub mod player;
 pub mod inventory;
 pub mod object;
+pub mod player;
+pub mod team;
 
 use crate::game::entities::{inventory::Inventory, object::Objet, player::Player, team::Team};
 
-pub enum Entities {
+pub enum Entities
+{
 	Team(Team),
 	Player(Player),
 	Inventory(Inventory),

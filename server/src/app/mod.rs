@@ -15,8 +15,9 @@ use crate::server::ServerSettings;
 use crate::server::ServerState;
 
 #[derive(Debug)]
-pub struct AppState {
-    pub game: GameState,
-    pub server: ServerState,
-    pub settings: ServerSettings,
+pub struct AppState
+{
+	pub game: GameState,
+	pub server: ServerState,
+	pub settings: ServerSettings,
 }
