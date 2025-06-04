@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 21:54:08 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/04 14:08:49 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/04 18:45:37 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,6 +138,6 @@ pub fn spawn_object(map: &mut Map)
 		};
 
 		*map[y][x].content.entry(res.clone()).or_insert(0) += 1;
-		game_log!("{} {:?} a spawn en: {}x{}", "[DEBUG]".yellow().bold(), res, x, y);
+		// game_log!("{} {:?} a spawn en: {}x{}", "[DEBUG]".yellow().bold(), res, x, y);
 	}
 }
