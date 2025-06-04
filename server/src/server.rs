@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/04 18:22:31 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/04 18:29:46 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@ use std::collections::HashMap;
 use std::net::TcpListener;
 use std::process::exit;
 
+use colored::Colorize;
 use crate::client::client::Client;
 use crate::game::core::gamestate::GameState;
 use crate::game::entities::team::add_client_team;
