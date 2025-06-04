@@ -1,0 +1,72 @@
+name: Build and Release Windows Server
+
+on:
+  push:
+    branches:
+      - windows
+
+jobs:
+  build:
+    name: Build Windows Server
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: make install
+
+      - name: Build server only
+        run: make server
+
+      - name: Upload executable as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-windows
+          path: bin/server.exe
+
+  release:
+    name: Release Windows Server
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: server-windows
+          path: .
+
+      - name: Get latest release
+        id: get_release
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const releases = await github.rest.repos.listReleases({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            if (releases.data.length > 0) {
+              return releases.data[0].id;
+            } else {
+              const newRelease = await github.rest.repos.createRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag_name: 'v0.1.0',
+                name: 'Initial Release',
+                draft: false,
+                prerelease: false
+              });
+              return newRelease.data.id;
+            }
+
+      - name: Upload to GitHub Release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.get_release.outputs.result }}/assets{?name,label}
+          asset_path: ./server.exe
+          asset_name: server-windows.exe
+          asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
