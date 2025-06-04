@@ -6,7 +6,6 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/04 12:07:25 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -322,10 +321,8 @@ pub fn server_loop(server: &mut ServerState, game_state: &mut GameState)
 	}
 }
 
-pub fn init_server(config: &ServerSettings) -> TcpListener
-{
-	let addr: String = format!("127.0.0.1:{}", config.port);
-	let listener: TcpListener = setup_listener(&addr);
-
+pub fn init_server(config: &ServerSettings) -> TcpListener {
+    let addr: String = format!("0.0.0.0:{}", config.port);
+    let listener: TcpListener = setup_listener(&addr);
 	return listener;
 }
