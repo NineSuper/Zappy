@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:33:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/04 14:08:19 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/10 13:22:50 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ pub struct Player
 	pub pos_x: i32,
 	pub pos_y: i32,
 	pub inventory: Inventory,
-	life_unit: i32,
+	life_unit: f64,
 	pub level: u32,
 	direction: Direction,
 	health_points: i32,
@@ -48,18 +48,18 @@ impl Player
 {
 	pub fn new(id: String) -> Self
 	{
-		let mut player = Self {
+		let player = Self {
 			id: id,
 			pos_x: 1, // TODO
 			pos_y: 1, // TODO
 			inventory: Inventory::new(),
-			life_unit: 10,
+			life_unit: 1260.0,
 			level: 1,
 			direction: Direction::North,
 			health_points: 100,
 			client_id: None,
 		};
-		player.inventory.add(Objet::Food, 10);
+		// player.inventory.add(Objet::Food, 10);
 		return player;
 	}
 
@@ -67,10 +67,10 @@ impl Player
 	{
 		if map::take_object(map, self.pos_x, self.pos_y, obj.clone())
 		{
-			// DEBUG
 			game_log!(
-				"{} {}",
-				format!("[DEBUG] Client #{} a récupéré:", self.id).yellow().italic(),
+				"{} Client #{} a récupéré: {}",
+				"[GAME]".magenta().bold(),
+				self.id,
 				obj.name()
 			);
 
@@ -85,10 +85,10 @@ impl Player
 		// if map::drop_object(map, self.pos_x, self.pos_y, obj.clone())
 		if self.inventory.remove(obj.clone(), 1)
 		{
-			// DEBUG
 			game_log!(
-				"{} {}",
-				format!("[DEBUG] Client #{} a laché:", self.id).yellow().italic(),
+				"{} Client #{} a laché: {}",
+				"[GAME]".magenta().bold(),
+				self.id,
 				obj.name()
 			);
 
@@ -98,30 +98,32 @@ impl Player
 		return false;
 	}
 
-	/*
-		TODO Ajouter du temps de vie
-		One 'nourriture' unit allows him to survive 126 time units,
-		therefore 126/t seconds.
-	*/
-	pub fn _eat(&mut self) -> bool
+	pub fn eat(&mut self) -> bool
 	{
+		self.life_unit -= 1.0;
+
 		if self.inventory.get(Objet::Food) > 0
 		{
-			// DEBUG
-			game_log!(
-				"{}",
-				format!("[DEBUG] Joueur: {} vient de manger !", self.id).yellow().italic()
-			);
-
-			return self.inventory.remove(Objet::Food, 1);
+			if self.inventory.remove(Objet::Food, 1)
+			{
+				self.life_unit += 126.0;
+				game_log!(
+					"{} Client #{} vient de manger: {}",
+					"[GAME]".magenta().bold(),
+					self.id,
+					self.life_unit
+				);
+				return true;
+			}
 		}
-		// DEBUG
-		game_log!(
-			"{}",
-			format!("[DEBUG] Joueur: {} n'a pas de nourriture dans son inventaire !", self.id)
-				.yellow()
-				.italic()
-		);
+		// game_log!(
+		// 	"{}",
+		// 	format!("[DEBUG] Joueur #{}: {:.3}❤️", self.id, self.life_unit).yellow().italic().bold()
+		// );
+		if self.life_unit > 0.0
+		{
+			return true;
+		}
 		return false;
 	}
 
@@ -275,5 +277,13 @@ impl Player
 		}
 		response.push_str("}\n");
 		response
+	}
+}
+
+impl Drop for Player
+{
+	fn drop(&mut self)
+	{
+		game_log!("{} Joueur {} est mort", "[DEATH]".red().bold(), self.id);
 	}
 }
