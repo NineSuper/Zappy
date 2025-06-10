@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 13:10:07 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/04 15:27:46 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/10 12:43:17 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,10 @@ use std::time::Instant;
 
 pub fn update_game(app_state: &mut AppState)
 {
+	for team in app_state.game.teams.iter_mut()
+	{
+		team.players.retain_mut(|player| player.eat());
+	}
 	spawn_object(&mut app_state.game.map);
 }
 
@@ -35,7 +39,8 @@ pub fn game_loop(app_state: &mut AppState)
 	{
 		let now = Instant::now();
 
-		if handle_input() {
+		if handle_input()
+		{
 			break;
 		}
 		if now.duration_since(last_tick) >= tick_duration

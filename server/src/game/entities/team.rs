@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:31:03 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/03 17:28:28 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/10 13:02:05 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,12 +142,12 @@ pub fn add_client_team(name: String, teams: &mut Vec<Team>, client_id: i32) -> O
 				team.players.push(player);
 				team.connect_nbr -= 1;
 
-				game_log!(
-					"{} Nouveau joueur {} a rejoint l'équipe {}",
-					"[BIRTH]".green().bold(),
-					player_id,
-					name
-				);
+				// game_log!(
+				// 	"{} Nouveau joueur {} a rejoint l'équipe {}",
+				// 	"[BIRTH]".green().bold(),
+				// 	player_id,
+				// 	name
+				// );
 				return Some(player_id);
 			}
 			return None;
