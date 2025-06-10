@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/04 19:10:35 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/10 13:02:12 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,11 @@ use std::collections::HashMap;
 use std::net::TcpListener;
 use std::process::exit;
 
-use colored::Colorize;
-use crate::client::client::Client;
+use crate::client::client::{Client, PlayerStatus};
 use crate::game::core::gamestate::GameState;
 use crate::game::entities::team::add_client_team;
 use crate::game_log;
+use colored::Colorize;
 
 #[derive(Debug, Clone)]
 pub struct ServerSettings
@@ -74,9 +74,9 @@ fn accept_new_client(server: &mut ServerState)
 	}
 }
 
-fn disconnect_client(clients: &mut HashMap<i32, Client>, game_state: &mut GameState, id: i32)
+pub fn disconnect_client(clients: &mut HashMap<i32, Client>, game_state: &mut GameState, id: i32)
 {
-	if let Some(client) = clients.get(&id)
+	if let Some(client) = clients.get_mut(&id)
 	{
 		if client.team_id != 0
 		{
@@ -86,11 +86,6 @@ fn disconnect_client(clients: &mut HashMap<i32, Client>, game_state: &mut GameSt
 				{
 					if let Some(pos) = team.players.iter().position(|p| p.client_id == Some(id))
 					{
-						game_log!(
-							"{} Joueur {} est mort",
-							"[DEATH]".red().bold(),
-							team.players[pos].id
-						);
 						team.players.remove(pos);
 					}
 					break;
@@ -130,7 +125,7 @@ fn handle_first_command(client: &mut Client, game_state: &mut GameState) -> bool
 	let team_exists = game_state.teams.iter().any(|team| team.name == team_name);
 	if !team_exists
 	{
-        client.send_message("ko\n".to_string());
+		client.send_message("ko\n".to_string());
 		client.remove_command();
 		game_log!("{} Équipe {} n'existe pas", "[ERROR]".red().bold(), team_name);
 		return false;
@@ -141,7 +136,7 @@ fn handle_first_command(client: &mut Client, game_state: &mut GameState) -> bool
 		Some(id) => id,
 		None =>
 		{
-            client.send_message("ko\n".to_string());
+			client.send_message("ko\n".to_string());
 			client.remove_command();
 			game_log!("{} Impossible de rejoindre l'équipe {}", "[ERROR]".red().bold(), team_name);
 			return false;
@@ -195,7 +190,7 @@ pub fn handle_client(client: &mut Client, game_state: &mut GameState)
 		let action: &str = parts.next().unwrap_or("");
 		let args: Option<&str> = parts.next();
 
-		if !player_exists(game_state, client.id)
+		if !player_exists(game_state, client.id) || client.player_id.is_none()
 		{
 			client.send_message("Vous n'avez pas de joueur associé !\n".to_string());
 			return;
@@ -313,6 +308,15 @@ pub fn server_loop(server: &mut ServerState, game_state: &mut GameState)
 	}
 	for (id, client) in server.clients.iter_mut()
 	{
+		if !client.player_id.is_none() && player_exists(game_state, *id)
+		{
+			client.player_status = PlayerStatus::Active;
+		}
+		if client.player_status == PlayerStatus::Active && !player_exists(game_state, *id)
+		{
+			client.send_message("mort\n".to_string());
+			client.player_status = PlayerStatus::DeadPlayer;
+		}
 		if !client.read_from_stream()
 		{
 			to_remove.push(*id);
@@ -324,9 +328,10 @@ pub fn server_loop(server: &mut ServerState, game_state: &mut GameState)
 	}
 }
 
-pub fn init_server(config: &ServerSettings) -> TcpListener {
-    let addr: String = format!("0.0.0.0:{}", config.port);
-    let listener: TcpListener = setup_listener(&addr);
+pub fn init_server(config: &ServerSettings) -> TcpListener
+{
+	let addr: String = format!("0.0.0.0:{}", config.port);
+	let listener: TcpListener = setup_listener(&addr);
 
 	return listener;
 }
