@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:11:11 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/03 17:23:51 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/10 12:52:57 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,14 @@ pub struct PendingCommand
 	ticks_remaining: u32,
 }
 
+#[derive(Debug, Clone, PartialEq)]
+pub enum PlayerStatus
+{
+	Unassigned,
+	Active,
+	DeadPlayer,
+}
+
 #[derive(Debug)]
 pub struct Client
 {
@@ -33,6 +41,7 @@ pub struct Client
 	pub player_id: Option<String>,
 	pub team_id: u32,
 	pending_commands: Vec<PendingCommand>,
+	pub player_status: PlayerStatus,
 }
 
 impl Client
@@ -48,6 +57,7 @@ impl Client
 			player_id: None,
 			team_id: 0,
 			pending_commands: Vec::new(),
+			player_status: PlayerStatus::Unassigned,
 		}
 	}
 
