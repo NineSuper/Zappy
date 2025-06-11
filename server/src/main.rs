@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 15:23:47 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/03 17:12:01 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/11 12:28:22 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,6 @@ fn main()
 		server: ServerState {
 			clients: HashMap::new(),
 			listener: init_server(&config),
-			connexion_max: config.connexion_max,
 			next_id: 0,
 		},
 		settings: config,

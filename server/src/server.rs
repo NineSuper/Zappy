@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/11 10:50:05 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/11 12:27:46 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ pub struct ServerState
 	pub clients: HashMap<i32, Client>,
 	pub listener: TcpListener,
 	pub next_id: i32,
-	pub connexion_max: u32,
 }
 
 fn setup_listener(addr: &String) -> TcpListener
@@ -283,10 +282,7 @@ pub fn server_loop(server: &mut ServerState, game_state: &mut GameState)
 {
 	let mut to_remove = vec![];
 
-	if server.clients.len() < server.connexion_max.try_into().unwrap()
-	{
-		accept_new_client(server);
-	}
+	accept_new_client(server);
 	for (id, client) in server.clients.iter_mut()
 	{
 		if !client.player_id.is_none() && player_exists(game_state, *id)

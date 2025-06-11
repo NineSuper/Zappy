@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:33:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/11 10:56:36 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/11 12:20:05 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,10 +103,9 @@ impl Player
 			{
 				self.life_unit += 126.0;
 				game_log!(
-					"{} Client #{} vient de manger: {}",
+					"{} Client #{} a bien mangé",
 					"[GAME]".magenta().bold(),
 					self.id,
-					self.life_unit
 				);
 				return true;
 			}

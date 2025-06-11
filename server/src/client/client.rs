@@ -121,7 +121,7 @@ impl Client
 					.bold(),
 				e
 			);
-			return ;
+			return;
 		}
 		game_log!(
 			"{} Server -> Client #{}: {}",
