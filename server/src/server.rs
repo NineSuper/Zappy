@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/11 12:27:46 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/11 14:33:45 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ pub struct ServerSettings
 	pub connexion_max: u32,
 	pub time_unit: f64,
 	pub teams_name: Vec<String>,
+	pub display: bool,
 }
 
 #[derive(Debug)]

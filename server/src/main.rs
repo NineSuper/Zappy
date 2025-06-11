@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 15:23:47 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/11 12:28:22 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/11 13:49:31 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,9 +99,15 @@ fn main()
 			listener: init_server(&config),
 			next_id: 0,
 		},
-		settings: config,
+		settings: config.clone(),
 	};
-	display_init();
+	if !config.display
+	{
+		display_init();
+	}
 	game_loop(&mut app_state);
-	display_cleanup();
+	if !config.display
+	{
+		display_cleanup();
+	}
 }

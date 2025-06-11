@@ -10,11 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-use crate::{
-	game::{
-		entities::{object::Objet, player::Player, team::Team},
-		world::map::Cell,
-	},
+use crate::game::{
+	entities::{object::Objet, player::Player, team::Team},
+	world::map::Cell,
 };
 
 #[derive(Debug, Clone)]

@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:33:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/11 12:20:05 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/11 15:31:28 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ use crate::{game::core::gamestate::GameState, game_log};
 use colored::*;
 
 /*
-	* Player._id: ID_TEAM + _ + ID_PLAYER
+	* Player.id: ID_TEAM + _ + ID_PLAYER
 */
 
 #[derive(Debug, Clone, PartialEq)]
@@ -48,7 +48,7 @@ impl Player
 {
 	pub fn new(id: String) -> Self
 	{
-		let player = Self {
+		let mut player = Self {
 			id: id,
 			pos_x: 1, // TODO
 			pos_y: 1, // TODO
@@ -59,7 +59,7 @@ impl Player
 			health_points: 100,
 			client_id: None,
 		};
-		// player.inventory.add(Objet::Food, 10);
+		player.inventory.add(Objet::Food, 1);
 		return player;
 	}
 
@@ -68,7 +68,7 @@ impl Player
 		if map::take_object(map, self.pos_x, self.pos_y, obj.clone())
 		{
 			game_log!(
-				"{} Client #{} a récupéré: {}",
+				"{} Joueur #{} a récupéré: {}",
 				"[GAME]".magenta().bold(),
 				self.id,
 				obj.name()
@@ -85,7 +85,7 @@ impl Player
 		// if map::drop_object(map, self.pos_x, self.pos_y, obj.clone())
 		if self.inventory.remove(obj.clone(), 1)
 		{
-			game_log!("{} Client #{} a laché: {}", "[GAME]".magenta().bold(), self.id, obj.name());
+			game_log!("{} Joueur #{} a laché: {}", "[GAME]".magenta().bold(), self.id, obj.name());
 
 			// return self.inventory.remove(obj, 1);
 			return map::drop_object(map, self.pos_x, self.pos_y, obj.clone());
@@ -97,23 +97,19 @@ impl Player
 	{
 		self.life_unit -= 1.0;
 
-		if self.inventory.get(Objet::Food) > 0
+		if self.inventory.get(Objet::Food) > 0 && self.life_unit < 360.0
 		{
 			if self.inventory.remove(Objet::Food, 1)
 			{
 				self.life_unit += 126.0;
 				game_log!(
-					"{} Client #{} a bien mangé",
+					"{} Joueur #{} vient de feed son estomac..",
 					"[GAME]".magenta().bold(),
-					self.id,
+					self.id
 				);
 				return true;
 			}
 		}
-		// game_log!(
-		// 	"{}",
-		// 	format!("[DEBUG] Joueur #{}: {:.3}❤️", self.id, self.life_unit).yellow().italic().bold()
-		// );
 		if self.life_unit > 0.0
 		{
 			return true;
@@ -261,6 +257,8 @@ impl Player
 		let mut response = String::from("{");
 		let inventory = self.inventory.get_all_objects();
 
+		response.push_str(&format!("nourriture {}, ", self.life_unit).to_string());
+
 		for (i, (obj, count)) in inventory.iter().enumerate()
 		{
 			if i > 0
@@ -278,6 +276,6 @@ impl Drop for Player
 {
 	fn drop(&mut self)
 	{
-		game_log!("{} Joueur {} est mort !", "[DEATH]".red().bold(), self.id);
+		game_log!("{} Joueur {} vient de mourir d’une façon... peu glorieuse..", "[DEATH]".red().bold(), self.id);
 	}
 }

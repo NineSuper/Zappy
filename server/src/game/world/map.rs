@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 21:54:08 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/04 18:45:37 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/11 14:43:19 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,8 @@ pub fn create_map(width: u32, height: u32) -> Map
 	{
 		for cell in row.iter_mut()
 		{
-			if rng.random_bool(0.30)
-			// 30% de chance d'avoir un objet sur une cellule
+			if rng.random_bool(0.50)
+			// 50% de chance d'avoir un objet sur une cellule
 			{
 				let res: Objet = match rng.random_range(0..7)
 				{
@@ -140,4 +140,9 @@ pub fn spawn_object(map: &mut Map)
 		*map[y][x].content.entry(res.clone()).or_insert(0) += 1;
 		// game_log!("{} {:?} a spawn en: {}x{}", "[DEBUG]".yellow().bold(), res, x, y);
 	}
+}
+
+pub fn map_update(map: &mut Map)
+{
+	spawn_object(map);
 }

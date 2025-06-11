@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 18:44:26 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/03 17:29:33 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/11 14:35:53 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,14 +169,26 @@ fn update_system_metrics()
 	}
 }
 
+lazy_static! {
+	pub static ref DEBUG_MODE: bool = { std::env::args().any(|arg| arg == "-d") };
+}
+
 #[macro_export]
 macro_rules! game_log {
-	($msg:expr) => {{
-		$crate::gui::display::add_log($msg.to_string());
-	}};
-	($fmt:expr, $($arg:tt)*) => {{
-		$crate::gui::display::add_log(format!($fmt, $($arg)*));
-	}};
+    ($msg:expr) => {{
+        if *$crate::gui::display::DEBUG_MODE {
+            println!("{}", $msg);
+        } else {
+            $crate::gui::display::add_log($msg.to_string());
+        }
+    }};
+    ($fmt:expr, $($arg:tt)*) => {{
+        if *$crate::gui::display::DEBUG_MODE {
+            println!($fmt, $($arg)*);
+        } else {
+            $crate::gui::display::add_log(format!($fmt, $($arg)*));
+        }
+    }};
 }
 
 pub fn add_log(msg: String)
@@ -207,7 +219,7 @@ pub fn add_log(msg: String)
 // Retourne true si l'utilisateur veut quitter (Q), false sinon
 pub fn handle_input() -> bool
 {
-	if event::poll(std::time::Duration::from_millis(50)).unwrap_or(false)
+	if event::poll(std::time::Duration::from_millis(0)).unwrap_or(false)
 	{
 		if let Ok(Event::Key(key)) = event::read()
 		{
