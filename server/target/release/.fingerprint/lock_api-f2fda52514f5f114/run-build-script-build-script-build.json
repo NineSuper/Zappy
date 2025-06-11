@@ -1,0 +1,1 @@
+{"rustc":12194204789475257770,"features":"","declared_features":"","target":0,"profile":0,"path":0,"deps":[[8081351675046095464,"build_script_build",false,14336864213761514804]],"local":[{"RerunIfChanged":{"output":"release/build/lock_api-f2fda52514f5f114/output","paths":["build.rs"]}}],"rustflags":["-Awarnings"],"config":0,"compile_kind":0}
