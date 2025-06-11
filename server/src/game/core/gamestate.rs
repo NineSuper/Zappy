@@ -6,14 +6,14 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 12:04:45 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/10 12:22:29 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/11 10:30:17 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-use crate::game::{
+use crate::{game::{
 	entities::{object::Objet, player::Player, team::Team},
 	world::map::Cell,
-};
+}, game_log};
 
 #[derive(Debug, Clone)]
 pub struct GameState
@@ -160,6 +160,21 @@ impl GameState
 	{
 	}
 
+    pub fn get_team_connect_nbr(&mut self, client_id: i32) -> u32
+	{
+        if let Some(_) = self.get_player_by_client_id(client_id)
+		{
+            for team in &self.teams
+			{
+                if team.players.iter().any(|p| p.client_id == Some(client_id))
+				{
+                    return team.get_connect_nbr();
+                }
+            }
+        }
+        return 0;
+    }
+
 	pub fn _get_player_level(&self, client_id: i32) -> u32
 	{
 		for team in &self.teams
@@ -174,4 +189,19 @@ impl GameState
 		}
 		return 1;
 	}
+}
+
+pub fn player_exists(game_state: &GameState, client_id: i32) -> bool
+{
+	for team in &game_state.teams
+	{
+		for player in &team.players
+		{
+			if player.client_id == Some(client_id)
+			{
+				return true;
+			}
+		}
+	}
+	false
 }

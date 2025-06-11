@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/10 13:02:12 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/11 10:50:05 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@ use std::net::TcpListener;
 use std::process::exit;
 
 use crate::client::client::{Client, PlayerStatus};
-use crate::game::core::gamestate::GameState;
+use crate::game::core::gamestate::{player_exists, GameState};
 use crate::game::entities::team::add_client_team;
 use crate::game_log;
 use colored::Colorize;
@@ -84,31 +84,12 @@ pub fn disconnect_client(clients: &mut HashMap<i32, Client>, game_state: &mut Ga
 			{
 				if team.id == client.team_id
 				{
-					if let Some(pos) = team.players.iter().position(|p| p.client_id == Some(id))
-					{
-						team.players.remove(pos);
-					}
-					break;
+					team.unassign_player(client.id);
 				}
 			}
 		}
 	}
 	clients.remove(&id);
-}
-
-fn player_exists(game_state: &GameState, client_id: i32) -> bool
-{
-	for team in &game_state.teams
-	{
-		for player in &team.players
-		{
-			if player.client_id == Some(client_id)
-			{
-				return true;
-			}
-		}
-	}
-	false
 }
 
 fn handle_first_command(client: &mut Client, game_state: &mut GameState) -> bool
@@ -167,7 +148,7 @@ fn handle_first_command(client: &mut Client, game_state: &mut GameState) -> bool
 
 	game_log!(
 		"{} Client #{} a rejoint l'équipe {}",
-		"[SUCCESS]".green().bold(),
+		"[GAME]".magenta().bold(),
 		client.id,
 		team_name
 	);
@@ -287,8 +268,8 @@ pub fn handle_client(client: &mut Client, game_state: &mut GameState)
 			}
 			"connect_nbr" =>
 			{
-				// let connections = game_state.get_team_free_connections(client.id);
-				client.send_message("0\n".to_string());
+				let connections = game_state.get_team_connect_nbr(client.id);
+				client.send_message(format!("{}\n", connections));
 			}
 			_ =>
 			{

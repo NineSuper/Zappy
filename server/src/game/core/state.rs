@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 13:10:07 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/10 12:43:17 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/11 09:15:09 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,7 @@ pub fn game_loop(app_state: &mut AppState)
 	{
 		let now = Instant::now();
 
-		if handle_input()
-		{
-			break;
-		}
+		if handle_input() { break; }
 		if now.duration_since(last_tick) >= tick_duration
 		{
 			for client in app_state.server.clients.values_mut()
@@ -65,6 +62,6 @@ pub fn game_init(config: &mut ServerSettings) -> GameState
 {
 	GameState {
 		map: map::create_map(config.width, config.height),
-		teams: team::create_team(config.teams_name.clone()),
+		teams: team::create_team(config.teams_name.clone(), config.connexion_max),
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:33:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/10 13:22:50 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/11 10:56:36 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,12 +85,7 @@ impl Player
 		// if map::drop_object(map, self.pos_x, self.pos_y, obj.clone())
 		if self.inventory.remove(obj.clone(), 1)
 		{
-			game_log!(
-				"{} Client #{} a laché: {}",
-				"[GAME]".magenta().bold(),
-				self.id,
-				obj.name()
-			);
+			game_log!("{} Client #{} a laché: {}", "[GAME]".magenta().bold(), self.id, obj.name());
 
 			// return self.inventory.remove(obj, 1);
 			return map::drop_object(map, self.pos_x, self.pos_y, obj.clone());
@@ -284,6 +279,6 @@ impl Drop for Player
 {
 	fn drop(&mut self)
 	{
-		game_log!("{} Joueur {} est mort", "[DEATH]".red().bold(), self.id);
+		game_log!("{} Joueur {} est mort !", "[DEATH]".red().bold(), self.id);
 	}
 }

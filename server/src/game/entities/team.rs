@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:31:03 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/10 13:02:05 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/11 10:59:11 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ pub struct Team
 
 impl Team
 {
-	pub fn new(team_name: &str, id: u32) -> Self
+	pub fn new(team_name: &str, connect_nbr: u32, id: u32) -> Self
 	{
 		let team = Self {
 			id,
@@ -35,18 +35,26 @@ impl Team
 			_level: 1,
 			players: Vec::new(),
 			next_player_id: 1,
-			connect_nbr: 1,
+			connect_nbr: connect_nbr,
 		};
 		return team;
 	}
 
-	pub fn _add_player(&mut self)
+	pub fn add_player(&mut self)
 	{
 		let str = format!("{}_{}", self.id, self.next_player_id);
 		let player: Player = Player::new(str);
 
-		self.next_player_id += 1;
 		self.players.push(player);
+
+		game_log!(
+			"{} Joueur {} a rejoint l'équipe {}",
+			"[GAME]".magenta().bold(),
+			self.next_player_id,
+			self.name.bold().yellow(),
+		);
+
+		self.next_player_id += 1;
 	}
 
 	pub fn _remove_player(&mut self, player: &Player)
@@ -67,42 +75,28 @@ impl Team
 		self.connect_nbr += 1;
 	}
 
-	pub fn _assign_player(&mut self, client_id: i32) -> Option<String>
+	pub fn assign_player(&mut self, client_id: i32) -> Option<String>
 	{
 		for player in &mut self.players
 		{
 			if player.client_id.is_none()
 			{
-				self.connect_nbr += 1;
+				self.connect_nbr -= 1;
 				player.client_id = Some(client_id);
 
-				game_log!(
-					"{} Client #{} a rejoint: {}({})",
-					"[TEAM]".magenta().bold(),
-					client_id,
-					self.name,
-					self.id
-				);
 				return Some(player.id.clone());
 			}
 		}
 		return None;
 	}
 
-	pub fn _unassign_player(&mut self, client_id: i32)
+	pub fn unassign_player(&mut self, client_id: i32)
 	{
 		for player in &mut self.players.iter_mut()
 		{
 			if player.client_id == Some(client_id)
 			{
-				game_log!(
-					"{} Client #{} a quitté: {}({})",
-					"[TEAM]".red().bold(),
-					client_id,
-					self.name,
-					self.id
-				);
-				self.connect_nbr -= 1;
+				self.connect_nbr += 1;
 				player.client_id = None;
 			}
 		}
@@ -122,7 +116,7 @@ impl Team
 	}
 	pub fn get_connect_nbr(&self) -> u32
 	{
-		self.connect_nbr
+		self.players.len() as u32 - self.connect_nbr
 	}
 }
 
@@ -134,21 +128,22 @@ pub fn add_client_team(name: String, teams: &mut Vec<Team>, client_id: i32) -> O
 		{
 			if team.connect_nbr > 0
 			{
-				let player_id = format!("{}_{}", team.id, team.next_player_id);
-				let mut player = Player::new(player_id.clone());
-				player.client_id = Some(client_id);
+				let id = match team.assign_player(client_id)
+				{
+					Some(id) => id,
+					None => {
+						return None;
+					}
+				};
 
-				team.next_player_id += 1;
-				team.players.push(player);
-				team.connect_nbr -= 1;
+				game_log!(
+					"{} ({}) Client #{client_id} assigné au joueur: {}",
+					"[GAME]".magenta().bold(),
+					name.green().bold(),
+					id,
+				);
 
-				// game_log!(
-				// 	"{} Nouveau joueur {} a rejoint l'équipe {}",
-				// 	"[BIRTH]".green().bold(),
-				// 	player_id,
-				// 	name
-				// );
-				return Some(player_id);
+				return Some(id);
 			}
 			return None;
 		}
@@ -156,18 +151,7 @@ pub fn add_client_team(name: String, teams: &mut Vec<Team>, client_id: i32) -> O
 	return None;
 }
 
-pub fn _remove_client_team(team_id: u32, teams: &mut Vec<Team>, client_id: i32)
-{
-	for team in teams.iter_mut()
-	{
-		if team.id == team_id
-		{
-			team._unassign_player(client_id);
-		}
-	}
-}
-
-pub fn create_team(teams: Vec<String>) -> Vec<Team>
+pub fn create_team(teams: Vec<String>, connect_max: u32) -> Vec<Team>
 {
 	let mut all_team: Vec<Team> = vec![];
 	let mut i: u32 = 1;
@@ -175,16 +159,22 @@ pub fn create_team(teams: Vec<String>) -> Vec<Team>
 	game_log!("{}", "[INFO] Création des équipes...".bold().green());
 	for team_name in teams
 	{
-		let new_team: Team = Team::new(&team_name.to_string(), i);
+		let mut new_team: Team = Team::new(&team_name.to_string(), connect_max, i);
 
-		all_team.push(new_team);
 		game_log!(
 			"{} #{i}: {}",
 			format!("[Team]").magenta().bold(),
 			team_name.color(get_random_color()).bold()
 		);
+
+		for _ in 0..connect_max
+		{
+			new_team.add_player();
+		}
+
+		all_team.push(new_team);
 		i += 1;
 	}
-	game_log!("{}", "[INFO] Les équipes ont été créées !\n".bold().green());
+	game_log!("{}", "[INFO] Les équipes ont été créées !".bold().green());
 	return all_team;
 }
