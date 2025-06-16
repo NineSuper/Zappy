@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:33:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/11 15:31:28 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/15 13:21:56 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ impl Player
 
 	pub fn take_object(&mut self, map: &mut Vec<Vec<map::Cell>>, obj: Objet) -> bool
 	{
-		if map::take_object(map, self.pos_x, self.pos_y, obj.clone())
+		if map::take_object(map, self.pos_x, self.pos_y, obj.clone(), None)
 		{
 			game_log!(
 				"{} Joueur #{} a récupéré: {}",
@@ -88,7 +88,7 @@ impl Player
 			game_log!("{} Joueur #{} a laché: {}", "[GAME]".magenta().bold(), self.id, obj.name());
 
 			// return self.inventory.remove(obj, 1);
-			return map::drop_object(map, self.pos_x, self.pos_y, obj.clone());
+			return map::drop_object(map, self.pos_x, self.pos_y, obj.clone(), None);
 		}
 		return false;
 	}
@@ -276,6 +276,10 @@ impl Drop for Player
 {
 	fn drop(&mut self)
 	{
-		game_log!("{} Joueur {} vient de mourir d’une façon... peu glorieuse..", "[DEATH]".red().bold(), self.id);
+		game_log!(
+			"{} Joueur {} vient de mourir d’une façon... peu glorieuse..",
+			"[DEATH]".red().bold(),
+			self.id
+		);
 	}
 }

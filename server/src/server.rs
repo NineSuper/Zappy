@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/11 14:33:45 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/13 15:28:08 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,8 @@ fn setup_listener(addr: &String) -> TcpListener
 		{
 			listener.set_nonblocking(true).expect("Cannot set non-blocking");
 			game_log!("{}\n", "==========================================".yellow());
-			game_log!("🌍 Serveur ouvert sur: {}\n", addr);
-			game_log!("{}\n", "==========================================".yellow());
+			game_log!("🌍 Serveur client: {}\n", addr);
+			game_log!("{}", "==========================================".yellow());
 			return listener;
 		}
 		Err(e) =>

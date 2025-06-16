@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 15:23:47 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/11 13:49:31 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/13 15:25:33 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,10 +77,12 @@ mod app;
 mod client;
 mod config;
 mod game;
+mod gfx;
 mod gui;
 mod server;
 mod utils;
 
+use crate::gfx::graphics_broadcaster::GraphicsBroadcaster;
 use app::AppState;
 use game::core::state::{game_init, game_loop};
 use gui::display::{display_cleanup, display_init};
@@ -100,6 +102,7 @@ fn main()
 			next_id: 0,
 		},
 		settings: config.clone(),
+		gfx: GraphicsBroadcaster::new("0.0.0.0".to_string(), 4242),
 	};
 	if !config.display
 	{

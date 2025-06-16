@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 15:06:42 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/11 13:58:09 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/13 17:19:55 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,8 +117,8 @@ pub fn init_env() -> ServerSettings
 	let args: Vec<String> = get_args();
 	let config = ServerSettings {
 		port: get_var(&args, 'p'),
-		height: get_var(&args, 'x'),
-		width: get_var(&args, 'y'),
+		width: get_var(&args, 'x'),
+		height: get_var(&args, 'y'),
 		connexion_max: get_var(&args, 'c'),
 		time_unit: get_var_time(&args, 't'),
 		teams_name: get_teams(&args),

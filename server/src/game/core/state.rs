@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 13:10:07 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/11 14:43:35 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/15 13:20:16 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,14 @@ use std::time::Instant;
 pub fn update_game(app_state: &mut AppState)
 {
 	team_update(&mut app_state.game.teams);
-	map_update(&mut app_state.game.map);
+	map_update(&mut app_state.game.map, Some(&mut app_state.gfx));
+	app_state.gfx.update(&app_state.game);
 }
 
 pub fn game_loop(app_state: &mut AppState)
 {
 	let tick_duration = std::time::Duration::from_secs_f64(1.0 / app_state.settings.time_unit);
-	let display_tick = std::time::Duration::from_secs_f64(1.0 / 30.0); // 30/secondes
+	let display_tick = std::time::Duration::from_secs_f64(1.0 / 5.0); // 30/secondes
 	let mut last_tick = Instant::now();
 	let mut last_tick_display = Instant::now();
 
