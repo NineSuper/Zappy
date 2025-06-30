@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:31:03 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/11 12:24:20 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/30 14:57:24 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,4 +209,84 @@ pub fn create_team(teams: Vec<String>, connect_max: u32) -> Vec<Team>
 	}
 	game_log!("{}", "[INFO] Les équipes ont été créées !".bold().green());
 	return all_team;
+}
+
+/*
+{
+  "type": "teams",
+  "teams": [
+	{
+	  "id": 1,
+	  "name": "Rouge",
+	  "connect_nbr": 3,
+	  "players": [
+		{
+		  "id": "1_1",
+		  "x": 2,
+		  "y": 5,
+		  "vie": 100,
+		  "inventaire": {
+			"nourriture": 3,
+			"linemate": 1
+		  }
+		},
+		{
+		  "id": "1_2",
+		  "x": 4,
+		  "y": 1,
+		  "vie": 90,
+		  "inventaire": {
+
+		  }
+		}
+	  ]
+	},
+	{
+	  "name": "Bleu",
+	  "players": [
+		{
+		  "id": "2_1",
+		  "x": 14,
+		  "y": 12,
+		  "vie": 80,
+		  "inventaire": {
+			"phiras": 2
+		  }
+		}
+	  ]
+	}
+  ]
+}
+*/
+
+pub fn get_team_json(team: &Team) -> String
+{
+	let players_json: Vec<String> = team.players.iter().map(|player| player.get_json()).collect();
+
+	format!(
+		r#"{{
+			"id": {},
+			"name": "{}",
+			"connect_nbr": {},
+			"players": [
+				{}
+			]
+			}}"#,
+		team.id, team.name, team.connect_nbr, players_json.join(", ")
+	).replace(['\t', '\n', ' '], "")
+}
+
+pub fn get_info_teams_json(teams: &Vec<Team>) -> String
+{
+	let team_jsons: Vec<String> = teams.iter().map(|team| get_team_json(team)).collect();
+
+	format!(
+		r#"{{
+			"type": "teams",
+			"teams": [
+				{}
+			]
+			}}"#,
+		team_jsons.join(", ")
+	).replace(['\t', '\n', ' '], "")
 }

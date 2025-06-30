@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 21:54:08 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/15 13:34:56 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/30 13:05:15 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,27 @@ use std::collections::HashMap;
 pub struct Cell
 {
 	pub content: HashMap<Objet, u32>,
+	pub update: bool,
 }
+
+/*
+	OLD
+	{"type":"cell_content","x":0,"y":1,"objets":["deraumere","deraumere","deraumere","sibur"]}
+
+	NEW
+	{"type": "cell_update", "x": 0, "y": 1, "objets": {"deraumere": 2, "nourriture": 4, "sibur": 1}}
+
+	{
+		"type": "cell_update",
+		"x": 0,
+		"y": 1,
+		"objets": {
+			"deraumere": 2,
+			"nourriture": 4,
+			"sibur": 1
+		}
+	}
+*/
 
 pub type Map = Vec<Vec<Cell>>;
 
@@ -34,7 +54,8 @@ pub fn create_map(width: u32, height: u32) -> Map
 	let mut map: Vec<Vec<Cell>> = vec![
 		vec![
 			Cell {
-				content: HashMap::new()
+				content: HashMap::new(),
+				update: false
 			};
 			width as usize
 		];
@@ -75,59 +96,47 @@ pub fn get_cell_mut(map: &mut Map, x: i32, y: i32) -> Option<&mut Cell>
 	map.get_mut(y as usize).and_then(|row| row.get_mut(x as usize))
 }
 
-pub fn get_cell_update_json(x: usize, y: usize, cell: &Cell) -> String
+pub fn get_cell_update_json(x: usize, y: usize, cell: &mut Cell) -> String
 {
-	let mut objets_list = Vec::new();
-	for (objet, &count) in &cell.content
+	let mut objets_json = Vec::new();
+
+	for (objet, count) in &cell.content
 	{
-		for _ in 0..count
+		if *count > 0
 		{
-			objets_list.push(format!("\"{}\"", objet.name()));
+			objets_json.push(format!(r#""{}": {}"#, objet.name(), count));
 		}
 	}
 
-	let objets_json = if objets_list.is_empty()
-	{
-		"[]".to_string()
-	}
-	else
-	{
-		format!("[{}]", objets_list.join(","))
-	};
+	let objets = format!("{{{}}}", objets_json.join(", "));
 
-	format!(r#"{{"type":"cell_update","x":{},"y":{},"objets":{}}}"#, x, y, objets_json)
+	let json = format!(
+		r#"{{
+            "type": "cell_update",
+            "x": {},
+            "y": {},
+            "objets": {}
+        }}"#,
+		x, y, objets
+	);
+
+	cell.update = false;
+	json.replace('\n', "").replace('\t', "").replace(" ", "")
 }
 
-pub fn drop_object(
-	map: &mut Map,
-	x: i32,
-	y: i32,
-	obj: Objet,
-	gfx: Option<&mut GraphicsBroadcaster>,
-) -> bool
+pub fn add_object(map: &mut Map, x: i32, y: i32, obj: Objet) -> bool
 {
 	if let Some(cell) = get_cell_mut(map, x, y)
 	{
 		*cell.content.entry(obj).or_insert(0) += 1;
-
-		if let Some(broadcaster) = gfx
-		{
-			let update_json = get_cell_update_json(x as usize, y as usize, cell);
-			broadcaster.broadcast_message(&update_json);
-		}
+		map[y as usize][x as usize].update = true;
 
 		return true;
 	}
 	return false;
 }
 
-pub fn take_object(
-	map: &mut Map,
-	x: i32,
-	y: i32,
-	obj: Objet,
-	gfx: Option<&mut GraphicsBroadcaster>,
-) -> bool
+pub fn remove_object(map: &mut Map, x: i32, y: i32, obj: Objet) -> bool
 {
 	if let Some(cell) = get_cell_mut(map, x, y)
 	{
@@ -140,12 +149,7 @@ pub fn take_object(
 				{
 					cell.content.remove(&obj);
 				}
-
-				if let Some(broadcaster) = gfx
-				{
-					let update_json = get_cell_update_json(x as usize, y as usize, cell);
-					broadcaster.broadcast_message(&update_json);
-				}
+				map[y as usize][x as usize].update = true;
 
 				return true;
 			}
@@ -154,7 +158,7 @@ pub fn take_object(
 	return false;
 }
 
-pub fn spawn_object(map: &mut Map, mut gfx: Option<&mut GraphicsBroadcaster>)
+pub fn spawn_object(map: &mut Map)
 {
 	let mut rng: ThreadRng = rng();
 	// il y'a 1% de chance par tick que des objets spawn sur la map
@@ -170,22 +174,17 @@ pub fn spawn_object(map: &mut Map, mut gfx: Option<&mut GraphicsBroadcaster>)
 		let y = rng.random_range(0..map.len());
 		let res = match rng.random_range(0..7)
 		{
-			0 => Objet::Food,
+			0 => Objet::Thystame,
 			1 => Objet::Linemate,
 			2 => Objet::Deraumere,
 			3 => Objet::Sibur,
 			4 => Objet::Mendiane,
 			5 => Objet::Phiras,
-			_ => Objet::Thystame,
+			_ => Objet::Food, // 2/7 de spawn
 		};
 
 		*map[y][x].content.entry(res.clone()).or_insert(0) += 1;
-
-		if let Some(broadcaster) = gfx.as_mut()
-		{
-			let update_json = get_cell_update_json(x, y, &map[y][x]);
-			broadcaster.broadcast_message(&update_json);
-		}
+		map[y][x].update = true;
 
 		// game_log!("{} {:?} a spawn en: {}x{}", "[DEBUG]".yellow().bold(), res, x, y);
 	}
@@ -193,12 +192,28 @@ pub fn spawn_object(map: &mut Map, mut gfx: Option<&mut GraphicsBroadcaster>)
 
 pub fn map_update(map: &mut Map, gfx: Option<&mut GraphicsBroadcaster>)
 {
-	spawn_object(map, gfx);
+	spawn_object(map);
+
+	if let Some(broadcaster) = gfx
+	{
+		for (y, row) in map.iter_mut().enumerate()
+		{
+			for (x, cell) in row.iter_mut().enumerate()
+			{
+				if cell.update
+				{
+					let update_json = get_cell_update_json(x, y, cell);
+					broadcaster.broadcast_message(&update_json);
+				}
+			}
+		}
+	}
 }
 
 pub fn get_map_json(map: &Map) -> String
 {
 	let mut cellules_json = Vec::new();
+
 	for (y, row) in map.iter().enumerate()
 	{
 		for (x, cell) in row.iter().enumerate()
@@ -206,20 +221,24 @@ pub fn get_map_json(map: &Map) -> String
 			if !cell.content.is_empty()
 			{
 				let mut objets_list = Vec::new();
+
 				for (objet, &count) in &cell.content
 				{
-					for _ in 0..count
+					if count > 0
 					{
-						objets_list.push(format!("\"{}\"", objet.name()));
+						objets_list.push(format!(r#""{}": {}"#, objet.name(), count));
 					}
 				}
-				let objets_json = format!("[{}]", objets_list.join(", "));
+
+				let objets_json = format!("{{{}}}", objets_list.join(", "));
+
 				let cellule_json =
 					format!(r#"{{"x": {}, "y": {}, "objets": {}}}"#, x, y, objets_json);
 				cellules_json.push(cellule_json);
 			}
 		}
 	}
+
 	let json = format!(
 		r#"{{
 			"type": "map",
@@ -232,5 +251,6 @@ pub fn get_map_json(map: &Map) -> String
 		cellules_json.join(", ")
 	)
 	.replace(['\t', '\n', ' '], "");
+
 	return json;
 }

@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:33:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/15 13:21:56 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/30 15:20:07 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ impl Player
 
 	pub fn take_object(&mut self, map: &mut Vec<Vec<map::Cell>>, obj: Objet) -> bool
 	{
-		if map::take_object(map, self.pos_x, self.pos_y, obj.clone(), None)
+		if map::remove_object(map, self.pos_x, self.pos_y, obj.clone())
 		{
 			game_log!(
 				"{} Joueur #{} a récupéré: {}",
@@ -88,7 +88,7 @@ impl Player
 			game_log!("{} Joueur #{} a laché: {}", "[GAME]".magenta().bold(), self.id, obj.name());
 
 			// return self.inventory.remove(obj, 1);
-			return map::drop_object(map, self.pos_x, self.pos_y, obj.clone(), None);
+			return map::add_object(map, self.pos_x, self.pos_y, obj.clone());
 		}
 		return false;
 	}
@@ -269,6 +269,55 @@ impl Player
 		}
 		response.push_str("}\n");
 		response
+	}
+
+	pub fn get_inventory_json(&self) -> String
+	{
+		let mut response = String::from("{");
+		let inventory = self.inventory.get_all_objects();
+
+		response.push_str(&format!("\"nourriture\" : {}, ", self.life_unit).to_string());
+
+		for (i, (obj, count)) in inventory.iter().enumerate()
+		{
+			if i > 0
+			{
+				response.push_str(", ");
+			}
+			response.push_str(&format!("\"{}\": {}", obj.name().to_lowercase(), count));
+		}
+		response.push_str("}\n");
+		response
+	}
+
+	pub fn get_json(&self) -> String
+	{
+		let client_id = match self.client_id
+		{
+			Some(client_id) => client_id,
+			None => 0
+		};
+
+		format!(
+			r#"{{
+				"id": "{}",
+				"x": {},
+				"y": {},
+				"vie": {},
+				"level": {},
+				"direction": "{:?}",
+				"client_id": {},
+				"inventaire": {}
+			}}"#,
+			self.id,
+			self.pos_x,
+			self.pos_y,
+			self.life_unit,
+			self.level,
+			self.direction,
+			client_id,
+			self.get_inventory_json()
+		).replace(['\t', '\n', ' '], "")
 	}
 }
 

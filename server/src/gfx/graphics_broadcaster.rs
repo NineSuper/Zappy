@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 11:03:30 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/15 13:32:56 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/30 14:38:08 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ use std::{
 use colored::Colorize;
 
 use crate::{
-	game::{core::gamestate::GameState, world::map::get_map_json},
+	game::{core::gamestate::GameState, entities::team::get_info_teams_json, world::map::get_map_json},
 	game_log,
 };
 
@@ -79,6 +79,7 @@ impl GraphicsBroadcaster
 				if let Ok((mut stream, _)) = listener.accept()
 				{
 					self.send_json(self.next_id, &mut stream, get_map_json(&game.map));
+					self.send_json(self.next_id, &mut stream, get_info_teams_json(&game.teams));
 					self.clients.insert(self.next_id, stream);
 					self.next_id += 1;
 				}

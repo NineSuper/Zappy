@@ -1,0 +1,12 @@
+/Users/nine/Desktop/42/Zappy/server/target/debug/deps/libc-b5c137f6a9357e61.d: /Users/nine/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.174/src/lib.rs /Users/nine/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.174/src/macros.rs /Users/nine/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.174/src/primitives.rs /Users/nine/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.174/src/unix/mod.rs /Users/nine/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.174/src/unix/bsd/mod.rs /Users/nine/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.174/src/unix/bsd/apple/mod.rs /Users/nine/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.174/src/unix/bsd/apple/b64/mod.rs /Users/nine/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.174/src/unix/bsd/apple/b64/x86_64/mod.rs
+
+/Users/nine/Desktop/42/Zappy/server/target/debug/deps/liblibc-b5c137f6a9357e61.rmeta: /Users/nine/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.174/src/lib.rs /Users/nine/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.174/src/macros.rs /Users/nine/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.174/src/primitives.rs /Users/nine/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.174/src/unix/mod.rs /Users/nine/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.174/src/unix/bsd/mod.rs /Users/nine/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.174/src/unix/bsd/apple/mod.rs /Users/nine/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.174/src/unix/bsd/apple/b64/mod.rs /Users/nine/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.174/src/unix/bsd/apple/b64/x86_64/mod.rs
+
+/Users/nine/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.174/src/lib.rs:
+/Users/nine/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.174/src/macros.rs:
+/Users/nine/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.174/src/primitives.rs:
+/Users/nine/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.174/src/unix/mod.rs:
+/Users/nine/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.174/src/unix/bsd/mod.rs:
+/Users/nine/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.174/src/unix/bsd/apple/mod.rs:
+/Users/nine/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.174/src/unix/bsd/apple/b64/mod.rs:
+/Users/nine/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.174/src/unix/bsd/apple/b64/x86_64/mod.rs:
