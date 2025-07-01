@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:11:11 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/12 11:46:33 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/07/01 11:14:08 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@ use colored::*;
 use std::io::{Read, Write};
 use std::net::{IpAddr, SocketAddr, TcpStream};
 
+use crate::game::core::gamestate::{player_exists, GameState};
 use crate::game_log;
 
 #[derive(Debug)]
@@ -197,6 +198,28 @@ impl Client
 	pub fn _get_port(&self) -> u16
 	{
 		self.addr.port()
+	}
+
+	pub fn update(&mut self, game_state: &mut GameState) -> bool
+	{
+		let mut player_status : PlayerStatus = self.player_status.clone();
+
+		if !self.read_from_stream()
+		{
+			return false;
+		}
+		if !self.player_id.is_none() && player_exists(game_state, self.id)
+		{
+			player_status = PlayerStatus::Active;
+		}
+		if player_status == PlayerStatus::Active && !player_exists(game_state, self.id)
+		{
+			self.send_message("mort\n".to_string());
+			player_status = PlayerStatus::DeadPlayer;
+		}
+		self.player_status = player_status;
+
+		return true;
 	}
 }
 

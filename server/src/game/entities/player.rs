@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:33:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/30 15:20:07 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/07/01 10:58:20 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,8 +103,8 @@ impl Player
 			{
 				self.life_unit += 126.0;
 				game_log!(
-					"{} Joueur #{} vient de feed son estomac..",
-					"[GAME]".magenta().bold(),
+					"{} Joueur #{} vient de manger",
+					"[DEBUG]".yellow().bold().italic(),
 					self.id
 				);
 				return true;

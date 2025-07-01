@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/13 15:28:08 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/07/01 10:57:12 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@ use std::collections::HashMap;
 use std::net::TcpListener;
 use std::process::exit;
 
-use crate::client::client::{Client, PlayerStatus};
+use crate::client::client::Client;
 use crate::game::core::gamestate::{player_exists, GameState};
 use crate::game::entities::team::add_client_team;
 use crate::game_log;
@@ -286,16 +286,7 @@ pub fn server_loop(server: &mut ServerState, game_state: &mut GameState)
 	accept_new_client(server);
 	for (id, client) in server.clients.iter_mut()
 	{
-		if !client.player_id.is_none() && player_exists(game_state, *id)
-		{
-			client.player_status = PlayerStatus::Active;
-		}
-		if client.player_status == PlayerStatus::Active && !player_exists(game_state, *id)
-		{
-			client.send_message("mort\n".to_string());
-			client.player_status = PlayerStatus::DeadPlayer;
-		}
-		if !client.read_from_stream()
+		if !client.update(game_state)
 		{
 			to_remove.push(*id);
 		}
