@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:33:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/11 10:56:36 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/07/01 10:58:20 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ use crate::{game::core::gamestate::GameState, game_log};
 use colored::*;
 
 /*
-	* Player._id: ID_TEAM + _ + ID_PLAYER
+	* Player.id: ID_TEAM + _ + ID_PLAYER
 */
 
 #[derive(Debug, Clone, PartialEq)]
@@ -48,7 +48,7 @@ impl Player
 {
 	pub fn new(id: String) -> Self
 	{
-		let player = Self {
+		let mut player = Self {
 			id: id,
 			pos_x: 1, // TODO
 			pos_y: 1, // TODO
@@ -59,16 +59,16 @@ impl Player
 			health_points: 100,
 			client_id: None,
 		};
-		// player.inventory.add(Objet::Food, 10);
+		player.inventory.add(Objet::Food, 1);
 		return player;
 	}
 
 	pub fn take_object(&mut self, map: &mut Vec<Vec<map::Cell>>, obj: Objet) -> bool
 	{
-		if map::take_object(map, self.pos_x, self.pos_y, obj.clone())
+		if map::remove_object(map, self.pos_x, self.pos_y, obj.clone())
 		{
 			game_log!(
-				"{} Client #{} a récupéré: {}",
+				"{} Joueur #{} a récupéré: {}",
 				"[GAME]".magenta().bold(),
 				self.id,
 				obj.name()
@@ -85,10 +85,10 @@ impl Player
 		// if map::drop_object(map, self.pos_x, self.pos_y, obj.clone())
 		if self.inventory.remove(obj.clone(), 1)
 		{
-			game_log!("{} Client #{} a laché: {}", "[GAME]".magenta().bold(), self.id, obj.name());
+			game_log!("{} Joueur #{} a laché: {}", "[GAME]".magenta().bold(), self.id, obj.name());
 
 			// return self.inventory.remove(obj, 1);
-			return map::drop_object(map, self.pos_x, self.pos_y, obj.clone());
+			return map::add_object(map, self.pos_x, self.pos_y, obj.clone());
 		}
 		return false;
 	}
@@ -97,24 +97,19 @@ impl Player
 	{
 		self.life_unit -= 1.0;
 
-		if self.inventory.get(Objet::Food) > 0
+		if self.inventory.get(Objet::Food) > 0 && self.life_unit < 360.0
 		{
 			if self.inventory.remove(Objet::Food, 1)
 			{
 				self.life_unit += 126.0;
 				game_log!(
-					"{} Client #{} vient de manger: {}",
-					"[GAME]".magenta().bold(),
-					self.id,
-					self.life_unit
+					"{} Joueur #{} vient de manger",
+					"[DEBUG]".yellow().bold().italic(),
+					self.id
 				);
 				return true;
 			}
 		}
-		// game_log!(
-		// 	"{}",
-		// 	format!("[DEBUG] Joueur #{}: {:.3}❤️", self.id, self.life_unit).yellow().italic().bold()
-		// );
 		if self.life_unit > 0.0
 		{
 			return true;
@@ -262,6 +257,8 @@ impl Player
 		let mut response = String::from("{");
 		let inventory = self.inventory.get_all_objects();
 
+		response.push_str(&format!("nourriture {}, ", self.life_unit).to_string());
+
 		for (i, (obj, count)) in inventory.iter().enumerate()
 		{
 			if i > 0
@@ -273,12 +270,65 @@ impl Player
 		response.push_str("}\n");
 		response
 	}
+
+	pub fn get_inventory_json(&self) -> String
+	{
+		let mut response = String::from("{");
+		let inventory = self.inventory.get_all_objects();
+
+		response.push_str(&format!("\"nourriture\" : {}, ", self.life_unit).to_string());
+
+		for (i, (obj, count)) in inventory.iter().enumerate()
+		{
+			if i > 0
+			{
+				response.push_str(", ");
+			}
+			response.push_str(&format!("\"{}\": {}", obj.name().to_lowercase(), count));
+		}
+		response.push_str("}\n");
+		response
+	}
+
+	pub fn get_json(&self) -> String
+	{
+		let client_id = match self.client_id
+		{
+			Some(client_id) => client_id,
+			None => 0
+		};
+
+		format!(
+			r#"{{
+				"id": "{}",
+				"x": {},
+				"y": {},
+				"vie": {},
+				"level": {},
+				"direction": "{:?}",
+				"client_id": {},
+				"inventaire": {}
+			}}"#,
+			self.id,
+			self.pos_x,
+			self.pos_y,
+			self.life_unit,
+			self.level,
+			self.direction,
+			client_id,
+			self.get_inventory_json()
+		).replace(['\t', '\n', ' '], "")
+	}
 }
 
 impl Drop for Player
 {
 	fn drop(&mut self)
 	{
-		game_log!("{} Joueur {} est mort !", "[DEATH]".red().bold(), self.id);
+		game_log!(
+			"{} Joueur {} vient de mourir d’une façon... peu glorieuse..",
+			"[DEATH]".red().bold(),
+			self.id
+		);
 	}
 }

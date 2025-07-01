@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:41:42 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/04 12:34:48 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/11 15:30:03 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ impl Inventory
 	{
 		let mut result = Vec::new();
 
-		result.push((Objet::Food, self.get(Objet::Food)));
+		// result.push((Objet::Food, self.get(Objet::Food)));
 		result.push((Objet::Linemate, self.get(Objet::Linemate)));
 		result.push((Objet::Deraumere, self.get(Objet::Deraumere)));
 		result.push((Objet::Sibur, self.get(Objet::Sibur)));

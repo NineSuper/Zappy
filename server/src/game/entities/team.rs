@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:31:03 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/11 10:59:11 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/30 14:57:24 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ pub struct Team
 
 impl Team
 {
-	pub fn new(team_name: &str, connect_nbr: u32, id: u32) -> Self
+	pub fn new(team_name: &str, id: u32) -> Self
 	{
 		let team = Self {
 			id,
@@ -35,7 +35,7 @@ impl Team
 			_level: 1,
 			players: Vec::new(),
 			next_player_id: 1,
-			connect_nbr: connect_nbr,
+			connect_nbr: 0,
 		};
 		return team;
 	}
@@ -54,13 +54,15 @@ impl Team
 			self.name.bold().yellow(),
 		);
 
+		self.connect_nbr += 1;
 		self.next_player_id += 1;
 	}
 
-	pub fn _remove_player(&mut self, player: &Player)
+	pub fn remove_player(&mut self, player_id: &str)
 	{
-		if let Some(pos) = self.players.iter().position(|p: &Player| p == player)
+		if let Some(pos) = self.players.iter().position(|p: &Player| p.id == player_id)
 		{
+			self.connect_nbr -= 1;
 			self.players.remove(pos);
 		}
 	}
@@ -68,11 +70,6 @@ impl Team
 	pub fn _add_level(&mut self)
 	{
 		self._level += 1;
-	}
-
-	pub fn _add_connect_nbr(&mut self)
-	{
-		self.connect_nbr += 1;
 	}
 
 	pub fn assign_player(&mut self, client_id: i32) -> Option<String>
@@ -106,17 +103,51 @@ impl Team
 	{
 		self._level
 	}
+
 	pub fn _get_players(&self) -> &Vec<Player>
 	{
 		&self.players
 	}
+
 	pub fn _get_players_mut(&mut self) -> &mut Vec<Player>
 	{
 		&mut self.players
 	}
+
+	pub fn _get_player_len(&self) -> u32
+	{
+		self.players.len() as u32
+	}
+
 	pub fn get_connect_nbr(&self) -> u32
 	{
-		self.players.len() as u32 - self.connect_nbr
+		self.connect_nbr
+	}
+
+	fn update(&mut self)
+	{
+		let mut i = 0;
+
+		while i < self.players.len()
+		{
+			if !self.players[i].eat()
+			{
+				let player_id = self.players[i].id.clone();
+				self.remove_player(&player_id);
+			}
+			else
+			{
+				i += 1;
+			}
+		}
+	}
+}
+
+pub fn team_update(teams: &mut Vec<Team>)
+{
+	for team in teams.iter_mut()
+	{
+		team.update();
 	}
 }
 
@@ -131,7 +162,8 @@ pub fn add_client_team(name: String, teams: &mut Vec<Team>, client_id: i32) -> O
 				let id = match team.assign_player(client_id)
 				{
 					Some(id) => id,
-					None => {
+					None =>
+					{
 						return None;
 					}
 				};
@@ -159,7 +191,7 @@ pub fn create_team(teams: Vec<String>, connect_max: u32) -> Vec<Team>
 	game_log!("{}", "[INFO] Création des équipes...".bold().green());
 	for team_name in teams
 	{
-		let mut new_team: Team = Team::new(&team_name.to_string(), connect_max, i);
+		let mut new_team: Team = Team::new(&team_name.to_string(), i);
 
 		game_log!(
 			"{} #{i}: {}",
@@ -177,4 +209,84 @@ pub fn create_team(teams: Vec<String>, connect_max: u32) -> Vec<Team>
 	}
 	game_log!("{}", "[INFO] Les équipes ont été créées !".bold().green());
 	return all_team;
+}
+
+/*
+{
+  "type": "teams",
+  "teams": [
+	{
+	  "id": 1,
+	  "name": "Rouge",
+	  "connect_nbr": 3,
+	  "players": [
+		{
+		  "id": "1_1",
+		  "x": 2,
+		  "y": 5,
+		  "vie": 100,
+		  "inventaire": {
+			"nourriture": 3,
+			"linemate": 1
+		  }
+		},
+		{
+		  "id": "1_2",
+		  "x": 4,
+		  "y": 1,
+		  "vie": 90,
+		  "inventaire": {
+
+		  }
+		}
+	  ]
+	},
+	{
+	  "name": "Bleu",
+	  "players": [
+		{
+		  "id": "2_1",
+		  "x": 14,
+		  "y": 12,
+		  "vie": 80,
+		  "inventaire": {
+			"phiras": 2
+		  }
+		}
+	  ]
+	}
+  ]
+}
+*/
+
+pub fn get_team_json(team: &Team) -> String
+{
+	let players_json: Vec<String> = team.players.iter().map(|player| player.get_json()).collect();
+
+	format!(
+		r#"{{
+			"id": {},
+			"name": "{}",
+			"connect_nbr": {},
+			"players": [
+				{}
+			]
+			}}"#,
+		team.id, team.name, team.connect_nbr, players_json.join(", ")
+	).replace(['\t', '\n', ' '], "")
+}
+
+pub fn get_info_teams_json(teams: &Vec<Team>) -> String
+{
+	let team_jsons: Vec<String> = teams.iter().map(|team| get_team_json(team)).collect();
+
+	format!(
+		r#"{{
+			"type": "teams",
+			"teams": [
+				{}
+			]
+			}}"#,
+		team_jsons.join(", ")
+	).replace(['\t', '\n', ' '], "")
 }

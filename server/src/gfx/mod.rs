@@ -5,21 +5,9 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/09 11:26:44 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/13 15:17:50 by tde-los-         ###   ########.fr       */
+/*   Created: 2025/06/13 11:03:19 by tde-los-          #+#    #+#             */
+/*   Updated: 2025/06/13 15:17:26 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-use crate::game::core::gamestate::GameState;
-use crate::gfx::graphics_broadcaster::GraphicsBroadcaster;
-use crate::server::ServerSettings;
-use crate::server::ServerState;
-
-#[derive(Debug)]
-pub struct AppState
-{
-	pub game: GameState,
-	pub server: ServerState,
-	pub settings: ServerSettings,
-	pub gfx: GraphicsBroadcaster,
-}
+pub mod graphics_broadcaster;

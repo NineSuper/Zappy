@@ -6,48 +6,67 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 21:54:08 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/04 18:45:37 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/30 13:05:15 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+use crate::game::entities::object::Objet;
+use crate::game_log;
+use crate::gfx::graphics_broadcaster::GraphicsBroadcaster;
 use colored::*;
 use rand::prelude::*;
 use rand::rng;
 use rand::rngs::ThreadRng;
 use std::collections::HashMap;
 
-use crate::game::entities::object::Objet;
-use crate::game_log;
-
 #[derive(Debug, Clone)]
 pub struct Cell
 {
 	pub content: HashMap<Objet, u32>,
+	pub update: bool,
 }
+
+/*
+	OLD
+	{"type":"cell_content","x":0,"y":1,"objets":["deraumere","deraumere","deraumere","sibur"]}
+
+	NEW
+	{"type": "cell_update", "x": 0, "y": 1, "objets": {"deraumere": 2, "nourriture": 4, "sibur": 1}}
+
+	{
+		"type": "cell_update",
+		"x": 0,
+		"y": 1,
+		"objets": {
+			"deraumere": 2,
+			"nourriture": 4,
+			"sibur": 1
+		}
+	}
+*/
 
 pub type Map = Vec<Vec<Cell>>;
 
 pub fn create_map(width: u32, height: u32) -> Map
 {
 	game_log!("{}", "[INFO] Création du monde...".bold().green());
-
 	let mut rng: ThreadRng = rng();
 	let mut map: Vec<Vec<Cell>> = vec![
 		vec![
 			Cell {
-				content: HashMap::new()
+				content: HashMap::new(),
+				update: false
 			};
 			width as usize
 		];
 		height as usize
 	];
-
 	for row in map.iter_mut()
 	{
 		for cell in row.iter_mut()
 		{
-			if rng.random_bool(0.30)
-			// 30% de chance d'avoir un objet sur une cellule
+			if rng.random_bool(0.50)
+			// 50% de chance d'avoir un objet sur une cellule
 			{
 				let res: Objet = match rng.random_range(0..7)
 				{
@@ -63,7 +82,6 @@ pub fn create_map(width: u32, height: u32) -> Map
 			}
 		}
 	}
-
 	game_log!("{}", "[INFO] Monde généré !\n".bold().green());
 	map
 }
@@ -78,17 +96,47 @@ pub fn get_cell_mut(map: &mut Map, x: i32, y: i32) -> Option<&mut Cell>
 	map.get_mut(y as usize).and_then(|row| row.get_mut(x as usize))
 }
 
-pub fn drop_object(map: &mut Map, x: i32, y: i32, obj: Objet) -> bool
+pub fn get_cell_update_json(x: usize, y: usize, cell: &mut Cell) -> String
+{
+	let mut objets_json = Vec::new();
+
+	for (objet, count) in &cell.content
+	{
+		if *count > 0
+		{
+			objets_json.push(format!(r#""{}": {}"#, objet.name(), count));
+		}
+	}
+
+	let objets = format!("{{{}}}", objets_json.join(", "));
+
+	let json = format!(
+		r#"{{
+            "type": "cell_update",
+            "x": {},
+            "y": {},
+            "objets": {}
+        }}"#,
+		x, y, objets
+	);
+
+	cell.update = false;
+	json.replace('\n', "").replace('\t', "").replace(" ", "")
+}
+
+pub fn add_object(map: &mut Map, x: i32, y: i32, obj: Objet) -> bool
 {
 	if let Some(cell) = get_cell_mut(map, x, y)
 	{
 		*cell.content.entry(obj).or_insert(0) += 1;
+		map[y as usize][x as usize].update = true;
+
 		return true;
 	}
 	return false;
 }
 
-pub fn take_object(map: &mut Map, x: i32, y: i32, obj: Objet) -> bool
+pub fn remove_object(map: &mut Map, x: i32, y: i32, obj: Objet) -> bool
 {
 	if let Some(cell) = get_cell_mut(map, x, y)
 	{
@@ -101,6 +149,8 @@ pub fn take_object(map: &mut Map, x: i32, y: i32, obj: Objet) -> bool
 				{
 					cell.content.remove(&obj);
 				}
+				map[y as usize][x as usize].update = true;
+
 				return true;
 			}
 		}
@@ -111,33 +161,96 @@ pub fn take_object(map: &mut Map, x: i32, y: i32, obj: Objet) -> bool
 pub fn spawn_object(map: &mut Map)
 {
 	let mut rng: ThreadRng = rng();
-
 	// il y'a 1% de chance par tick que des objets spawn sur la map
 	if !rng.random_bool(0.01)
 	{
 		return;
 	}
-
 	// entre 1 & 32 objets
 	let objects_to_spawn = rng.random_range(1..32);
-
 	for _ in 0..objects_to_spawn
 	{
 		let x = rng.random_range(0..map[0].len());
 		let y = rng.random_range(0..map.len());
-
 		let res = match rng.random_range(0..7)
 		{
-			0 => Objet::Food,
+			0 => Objet::Thystame,
 			1 => Objet::Linemate,
 			2 => Objet::Deraumere,
 			3 => Objet::Sibur,
 			4 => Objet::Mendiane,
 			5 => Objet::Phiras,
-			_ => Objet::Thystame,
+			_ => Objet::Food, // 2/7 de spawn
 		};
 
 		*map[y][x].content.entry(res.clone()).or_insert(0) += 1;
+		map[y][x].update = true;
+
 		// game_log!("{} {:?} a spawn en: {}x{}", "[DEBUG]".yellow().bold(), res, x, y);
 	}
+}
+
+pub fn map_update(map: &mut Map, gfx: Option<&mut GraphicsBroadcaster>)
+{
+	spawn_object(map);
+
+	if let Some(broadcaster) = gfx
+	{
+		for (y, row) in map.iter_mut().enumerate()
+		{
+			for (x, cell) in row.iter_mut().enumerate()
+			{
+				if cell.update
+				{
+					let update_json = get_cell_update_json(x, y, cell);
+					broadcaster.broadcast_message(&update_json);
+				}
+			}
+		}
+	}
+}
+
+pub fn get_map_json(map: &Map) -> String
+{
+	let mut cellules_json = Vec::new();
+
+	for (y, row) in map.iter().enumerate()
+	{
+		for (x, cell) in row.iter().enumerate()
+		{
+			if !cell.content.is_empty()
+			{
+				let mut objets_list = Vec::new();
+
+				for (objet, &count) in &cell.content
+				{
+					if count > 0
+					{
+						objets_list.push(format!(r#""{}": {}"#, objet.name(), count));
+					}
+				}
+
+				let objets_json = format!("{{{}}}", objets_list.join(", "));
+
+				let cellule_json =
+					format!(r#"{{"x": {}, "y": {}, "objets": {}}}"#, x, y, objets_json);
+				cellules_json.push(cellule_json);
+			}
+		}
+	}
+
+	let json = format!(
+		r#"{{
+			"type": "map",
+			"largeur": {},
+			"hauteur": {},
+			"cellules": [{}]
+			}}"#,
+		map[0].len(),
+		map.len(),
+		cellules_json.join(", ")
+	)
+	.replace(['\t', '\n', ' '], "");
+
+	return json;
 }

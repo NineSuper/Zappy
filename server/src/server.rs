@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/11 10:50:05 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/07/01 10:57:12 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@ use std::collections::HashMap;
 use std::net::TcpListener;
 use std::process::exit;
 
-use crate::client::client::{Client, PlayerStatus};
+use crate::client::client::Client;
 use crate::game::core::gamestate::{player_exists, GameState};
 use crate::game::entities::team::add_client_team;
 use crate::game_log;
@@ -29,6 +29,7 @@ pub struct ServerSettings
 	pub connexion_max: u32,
 	pub time_unit: f64,
 	pub teams_name: Vec<String>,
+	pub display: bool,
 }
 
 #[derive(Debug)]
@@ -37,7 +38,6 @@ pub struct ServerState
 	pub clients: HashMap<i32, Client>,
 	pub listener: TcpListener,
 	pub next_id: i32,
-	pub connexion_max: u32,
 }
 
 fn setup_listener(addr: &String) -> TcpListener
@@ -50,8 +50,8 @@ fn setup_listener(addr: &String) -> TcpListener
 		{
 			listener.set_nonblocking(true).expect("Cannot set non-blocking");
 			game_log!("{}\n", "==========================================".yellow());
-			game_log!("🌍 Serveur ouvert sur: {}\n", addr);
-			game_log!("{}\n", "==========================================".yellow());
+			game_log!("🌍 Serveur client: {}\n", addr);
+			game_log!("{}", "==========================================".yellow());
 			return listener;
 		}
 		Err(e) =>
@@ -283,22 +283,10 @@ pub fn server_loop(server: &mut ServerState, game_state: &mut GameState)
 {
 	let mut to_remove = vec![];
 
-	if server.clients.len() < server.connexion_max.try_into().unwrap()
-	{
-		accept_new_client(server);
-	}
+	accept_new_client(server);
 	for (id, client) in server.clients.iter_mut()
 	{
-		if !client.player_id.is_none() && player_exists(game_state, *id)
-		{
-			client.player_status = PlayerStatus::Active;
-		}
-		if client.player_status == PlayerStatus::Active && !player_exists(game_state, *id)
-		{
-			client.send_message("mort\n".to_string());
-			client.player_status = PlayerStatus::DeadPlayer;
-		}
-		if !client.read_from_stream()
+		if !client.update(game_state)
 		{
 			to_remove.push(*id);
 		}

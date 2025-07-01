@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 15:06:42 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/03 17:22:23 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/06/13 17:19:55 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,18 @@ fn get_var(args: &[String], flag: char) -> u32
 	}
 	println!("Erreur: argument -{} non trouvé ou invalide", flag);
 	exit(-1);
+}
+
+fn get_var_display(args: &[String], flag: char) -> bool
+{
+	for i in 0..args.len()
+	{
+		if args[i] == format!("-{}", flag)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 fn get_var_time(args: &[String], flag: char) -> f64
@@ -105,11 +117,12 @@ pub fn init_env() -> ServerSettings
 	let args: Vec<String> = get_args();
 	let config = ServerSettings {
 		port: get_var(&args, 'p'),
-		height: get_var(&args, 'x'),
-		width: get_var(&args, 'y'),
+		width: get_var(&args, 'x'),
+		height: get_var(&args, 'y'),
 		connexion_max: get_var(&args, 'c'),
 		time_unit: get_var_time(&args, 't'),
 		teams_name: get_teams(&args),
+		display: get_var_display(&args, 'd'),
 	};
 	return config;
 }
