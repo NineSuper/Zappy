@@ -295,7 +295,7 @@ impl Player
 		let client_id = match self.client_id
 		{
 			Some(client_id) => client_id,
-			None => 0
+			None => 0,
 		};
 
 		format!(
@@ -317,7 +317,8 @@ impl Player
 			self.direction,
 			client_id,
 			self.get_inventory_json()
-		).replace(['\t', '\n', ' '], "")
+		)
+		.replace(['\t', '\n', ' '], "")
 	}
 }
 

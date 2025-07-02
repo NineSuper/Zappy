@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 11:03:30 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/30 14:38:08 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/07/02 10:11:45 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,9 @@ use std::{
 use colored::Colorize;
 
 use crate::{
-	game::{core::gamestate::GameState, entities::team::get_info_teams_json, world::map::get_map_json},
+	game::{
+		core::gamestate::GameState, entities::team::get_info_teams_json, world::map::get_map_json,
+	},
 	game_log,
 };
 

@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 13:10:07 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/15 13:20:16 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/07/01 11:34:26 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ pub fn update_game(app_state: &mut AppState)
 pub fn game_loop(app_state: &mut AppState)
 {
 	let tick_duration = std::time::Duration::from_secs_f64(1.0 / app_state.settings.time_unit);
-	let display_tick = std::time::Duration::from_secs_f64(1.0 / 5.0); // 30/secondes
+	let display_tick = std::time::Duration::from_secs_f64(1.0 / 10.0); // 10/secondes
 	let mut last_tick = Instant::now();
 	let mut last_tick_display = Instant::now();
 

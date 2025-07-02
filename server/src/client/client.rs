@@ -202,7 +202,7 @@ impl Client
 
 	pub fn update(&mut self, game_state: &mut GameState) -> bool
 	{
-		let mut player_status : PlayerStatus = self.player_status.clone();
+		let mut player_status: PlayerStatus = self.player_status.clone();
 
 		if !self.read_from_stream()
 		{
