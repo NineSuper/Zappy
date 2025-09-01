@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 08:33:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/07/01 10:58:20 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/09/01 14:38:50 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,14 @@ pub enum Direction
 	South,
 	East,
 	West,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum PlayerStatus
+{
+	Unassigned,
+	Active,
+	DeadPlayer,
 }
 
 #[derive(Debug, Clone, PartialEq)]

@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:11:11 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/07/01 11:14:08 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/09/01 14:38:57 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@ use std::io::{Read, Write};
 use std::net::{IpAddr, SocketAddr, TcpStream};
 
 use crate::game::core::gamestate::{player_exists, GameState};
+use crate::game::entities::player::PlayerStatus;
 use crate::game_log;
 
 #[derive(Debug)]
@@ -22,14 +23,6 @@ pub struct PendingCommand
 {
 	command: String,
 	ticks_remaining: u32,
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub enum PlayerStatus
-{
-	Unassigned,
-	Active,
-	DeadPlayer,
 }
 
 #[derive(Debug)]
