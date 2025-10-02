@@ -21,7 +21,7 @@ SERVER_FLAG = --release
 SERVER_DIR 	= server
 SERVER_SRC 	= $(SERVER_DIR)/src
 SERVER_DEBUG = RUSTFLAGS="-Awarnings"
-# SERVER_DEBUG =
+#SERVER_DEBUG =
 
 # TODO
 CLIENT_BIN 	= $(BIN_DIR)/client

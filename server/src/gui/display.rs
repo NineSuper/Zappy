@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 18:44:26 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/06/11 14:35:53 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/07/01 11:52:31 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,7 +170,7 @@ fn update_system_metrics()
 }
 
 lazy_static! {
-	pub static ref DEBUG_MODE: bool = { std::env::args().any(|arg| arg == "-d") };
+	pub static ref DEBUG_MODE: bool = std::env::args().any(|arg| arg == "-d");
 }
 
 #[macro_export]
@@ -203,6 +203,7 @@ pub fn add_log(msg: String)
 	}
 
 	// Reset scroll quand un nouveau log arrive (optionnel)
+/*
 	unsafe {
 		if let Some(display) = &mut DISPLAY
 		{
@@ -213,6 +214,7 @@ pub fn add_log(msg: String)
 			}
 		}
 	}
+*/
 }
 
 // Fonction pour gérer les événements clavier

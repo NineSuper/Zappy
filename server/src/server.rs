@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 22:12:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/07/01 10:57:12 by tde-los-         ###   ########.fr       */
+/*   Updated: 2025/07/02 10:00:15 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ pub struct ServerSettings
 #[derive(Debug)]
 pub struct ServerState
 {
-	pub clients: HashMap<i32, Client>,
 	pub listener: TcpListener,
+	pub clients: HashMap<i32, Client>,
 	pub next_id: i32,
 }
 
