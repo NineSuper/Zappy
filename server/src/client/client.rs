@@ -6,7 +6,7 @@
 /*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:11:11 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/09/01 14:38:57 by tde-los-         ###   ########.fr       */
+/*   Updated: 2026/05/14 14:51:02 by tde-los-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,9 @@ pub struct Client
 
 impl Client
 {
-	pub fn new(stream: TcpStream, addr: SocketAddr, id: i32) -> Self
+	pub fn new(mut stream: TcpStream, addr: SocketAddr, id: i32) -> Self
 	{
+		stream.set_nonblocking(true).expect("Impossible de définir le socket en non-bloquant");
 		game_log!("{} Client #{id} (IP: {addr})", format!("[+]").green().bold());
 		Self {
 			id: id,
