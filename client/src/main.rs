@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.rs                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tde-los- <tde-los-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kyfontan <kyfontan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 09:50:16 by tde-los-          #+#    #+#             */
-/*   Updated: 2025/05/16 11:25:59 by tde-los-         ###   ########.fr       */
+/*   Updated: 2026/06/18 17:20:59 by kyfontan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,22 @@
 	*     - Entrée utilisateur envoyée directement au serveur
 */
 
+// ./client -n <team> -p <port> [-h <hostname>]
+// ex: ./client -n blue -p 8080
+
+
+mod client;
+mod utils;
+
+use utils::utils::Args;
+use client::init_handshake;
+use clap::Parser;
+
+
 fn	main()
 {
 	println!("Client");
+	let args = Args::parse();
+
+	init_handshake(args);
 }
