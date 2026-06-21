@@ -60,7 +60,9 @@ NO_COLOR        =       \033[0m
 
 # ------------------------------ Messages ------------------------------
 
-HEADER_COMP     =       echo "\n🤖 $(B_BLUE)$(NAME)$(NO_COLOR)$(BOLD) by $(B_RED)hbaduel $(B_WHITE)& $(B_PURPLE)mafrendo $(B_WHITE)& $(B_CYAN)lmas $(B_WHITE)& $(B_GREEN)tde-los-\n"
+# HEADER_COMP     =       echo "\n🤖 $(B_BLUE)$(NAME)$(NO_COLOR)$(BOLD) by $(B_RED)hbaduel $(B_WHITE)& $(B_PURPLE)mafrendo $(B_WHITE)& $(B_CYAN)lmas $(B_WHITE)& $(B_GREEN)tde-los-\n"
+
+HEADER_COMP     =       echo "\n🤖 $(B_BLUE)$(NAME)$(NO_COLOR)$(BOLD) by $(B_CYAN)kyfontan $(B_WHITE)& $(B_GREEN)tde-los-\n"
 
 COMP_START      =       printf "\n🚧 $(B_YELLOW)Make: $(NO_COLOR)$(BOLD)Debut de compilation...\r$(NO_COLOR)"
 
